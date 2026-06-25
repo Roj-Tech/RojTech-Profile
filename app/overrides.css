@@ -1,0 +1,146 @@
+/* Next.js layout additions: nav, hero grid, language switcher */
+
+nav {
+  direction: ltr;
+}
+
+.nav-menu {
+  gap: 8px;
+}
+
+.hero-content {
+  width: 100%;
+}
+
+p.learn-hint {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 12px;
+}
+
+/* Language switcher */
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-inline-end: 12px;
+  flex-shrink: 0;
+}
+
+.lang-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+  background: rgba(0, 245, 255, 0.04);
+  border: 1px solid rgba(0, 245, 255, 0.2);
+  color: var(--text-dim);
+  cursor: none;
+  transition: all 0.25s;
+}
+
+.lang-btn:hover {
+  color: var(--cyan);
+  border-color: rgba(0, 245, 255, 0.45);
+}
+
+.lang-btn.active {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  background: rgba(0, 245, 255, 0.1);
+  box-shadow: 0 0 12px rgba(0, 245, 255, 0.2);
+}
+
+.hero-logo-wrap {
+  direction: ltr;
+}
+
+.features-slider-box::before {
+  content: var(--slider-box-label, 'UPCOMING_FEATURES');
+}
+
+/* Carousels use translateX — keep LTR mechanics in all locales */
+.team-slider-wrap,
+.team-slider-viewport,
+.team-slider-track,
+.team-nav,
+.team-dots {
+  direction: ltr;
+}
+
+.features-slider-wrap,
+.features-slider-viewport,
+.features-slider-track,
+.features-slider-nav {
+  direction: ltr;
+}
+
+/* Hero: override legacy absolute positioning */
+.hero-visual {
+  position: relative !important;
+  right: auto !important;
+  top: auto !important;
+  transform: none !important;
+  width: 100%;
+  max-width: min(680px, 48vw);
+  opacity: 0.92;
+  display: none;
+  z-index: 4;
+}
+
+@media (min-width: 900px) {
+  #hero {
+    display: grid !important;
+    grid-template-columns: 1fr min(680px, 48vw);
+    gap: 3vw;
+    align-items: center;
+  }
+
+  .hero-content {
+    grid-column: 1;
+    grid-row: 1;
+    max-width: none;
+    justify-self: start;
+    align-self: center;
+    z-index: 4;
+  }
+
+  .hero-visual {
+    grid-column: 2;
+    grid-row: 1;
+    display: block !important;
+    justify-self: end;
+    align-self: center;
+  }
+
+  .features-slider-wrap {
+    width: 100%;
+    max-width: min(680px, 48vw);
+  }
+
+  .hero-logo-img {
+    width: min(1080px, 72vw);
+    margin-left: -120px;
+    margin-right: auto;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero-logo-img {
+    margin-left: -200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .lang-switcher {
+    margin-inline-end: 8px;
+  }
+
+  .lang-btn {
+    padding: 5px 8px;
+    font-size: 0.6rem;
+    cursor: pointer;
+  }
+}
