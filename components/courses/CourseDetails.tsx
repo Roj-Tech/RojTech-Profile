@@ -3,10 +3,13 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import type { PublicCourse } from '@/lib/courses/types';
+import { useTranslations } from '@/contexts/LocaleContext';
 
 export default function CourseDetails({ id }: { id: string }) {
+  const t = useTranslations();
+  const c = t.courses;
   const [course, setCourse] = useState<PublicCourse | null>(null);
-  const [categoryName, setCategoryName] = useState('');
+  const [categoryId, setCategoryId] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -17,17 +20,24 @@ export default function CourseDetails({ id }: { id: string }) {
       })
       .then((data) => {
         setCourse(data.course);
-        setCategoryName(data.categoryName || '');
+        setCategoryId(data.course.categoryId || '');
       })
-      .catch(() => setError('This resource is unavailable or unpublished.'));
-  }, [id]);
+      .catch(() => setError(c.unavailable));
+  }, [id, c.unavailable]);
+
+  function difficultyLabel(value: string) {
+    if (value === 'Beginner') return c.beginner;
+    if (value === 'Intermediate') return c.intermediate;
+    if (value === 'Advanced') return c.advanced;
+    return value;
+  }
 
   if (error) {
     return (
       <div className="tool-panel">
         <p className="feedback-toast error">{error}</p>
         <Link href="/courses" className="tool-btn">
-          Back to library
+          {c.backLibrary}
         </Link>
       </div>
     );
@@ -37,32 +47,38 @@ export default function CourseDetails({ id }: { id: string }) {
     return (
       <p className="tool-note">
         <span className="loading-dot" />
-        Loading resource…
+        {c.loadingResource}
       </p>
     );
   }
 
+  const categoryLabel = c.categories[categoryId] || categoryId;
+
   return (
     <>
       <header className="tool-hero">
-        <div className="tool-kicker">[ RESOURCE DETAILS ]</div>
+        <div className="tool-kicker">{c.detailsKicker}</div>
         <h1>{course.title}</h1>
         <p className="tool-lead">{course.description}</p>
       </header>
 
       <section className="tool-panel">
         <div className="tool-checks">
-          <div className="tool-check ok">{categoryName || course.categoryId}</div>
-          <div className="tool-check ok">{course.difficulty}</div>
+          <div className="tool-check ok">{categoryLabel}</div>
+          <div className="tool-check ok">{difficultyLabel(course.difficulty)}</div>
           <div className="tool-check ok">{course.subject}</div>
-          {course.author ? <div className="tool-check ok">Author: {course.author}</div> : null}
+          {course.author ? (
+            <div className="tool-check ok">
+              {c.author} {course.author}
+            </div>
+          ) : null}
           <div className="tool-check ok">
-            Added {new Date(course.createdAt).toLocaleDateString()}
+            {c.added} {new Date(course.createdAt).toLocaleDateString()}
           </div>
         </div>
         <div className="tool-input-row" style={{ marginTop: 16 }}>
           <Link href={`/courses/${course.id}/read`} className="tool-btn tool-btn-primary">
-            Read PDF
+            {c.readPdf}
           </Link>
           {course.allowDownload && (
             <a
@@ -70,11 +86,11 @@ export default function CourseDetails({ id }: { id: string }) {
               href={`/api/courses/${course.id}/file?download=1`}
               rel="noopener"
             >
-              Download PDF
+              {c.downloadPdf}
             </a>
           )}
           <Link href="/courses" className="tool-btn">
-            Back to library
+            {c.backLibrary}
           </Link>
         </div>
       </section>

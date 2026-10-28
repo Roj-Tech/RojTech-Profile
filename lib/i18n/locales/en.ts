@@ -1,6 +1,8 @@
 import type { Translations } from '../types';
+import { toolsEn } from './toolsEn';
 
 export const en: Translations = {
+  ...toolsEn,
   meta: {
     title: 'RojTech — Security Learning Platform',
     description:
@@ -40,6 +42,7 @@ export const en: Translations = {
     team: 'Team',
     learn: 'Learn',
     tools: 'Tools',
+    courses: 'Courses',
     connect: 'Connect',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
@@ -219,15 +222,23 @@ export const en: Translations = {
         title: 'Password Checker',
         feature: 'Password Checker',
       },
-      courses: {
-        title: 'Courses Library',
-        feature: 'Courses Library',
-      },
       'phishing-detector': {
         title: 'Phishing Detector',
         feature: 'Phishing Detector',
       },
     },
+  },
+  coursesHome: {
+    tag: 'Learning Hub',
+    titlePrefix: '',
+    titleEm: 'Courses',
+    lead: 'A dedicated library of PDF learning resources — separate from the security tools.',
+    statusLeft: 'LIBRARY_ONLINE',
+    statusRight: 'READY',
+    cardTitle: 'Courses Library',
+    cardDesc:
+      'Browse published materials across programming, cybersecurity, networking, and software engineering.',
+    openLibrary: 'Open library →',
   },
   footer: {
     copy: '© 2026 RojTech Platform · All Rights Reserved',
@@ -236,10 +247,6 @@ export const en: Translations = {
     'password-checker': {
       title: 'Password Checker',
       desc: 'Analyze password strength entirely in your browser — length, patterns, common passwords, and hardening tips with a secure generator.',
-    },
-    courses: {
-      title: 'Courses Library',
-      desc: 'Browse published PDF learning resources across programming, cybersecurity, networking, and software engineering.',
     },
     'phishing-detector': {
       title: 'Phishing Detector',

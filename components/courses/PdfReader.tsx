@@ -2,9 +2,12 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useTranslations } from '@/contexts/LocaleContext';
 
 export default function PdfReader({ id }: { id: string }) {
-  const [title, setTitle] = useState('PDF Reader');
+  const t = useTranslations();
+  const c = t.courses;
+  const [title, setTitle] = useState('');
   const [allowDownload, setAllowDownload] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,15 +21,15 @@ export default function PdfReader({ id }: { id: string }) {
         setTitle(data.course.title);
         setAllowDownload(Boolean(data.course.allowDownload));
       })
-      .catch(() => setError('Unable to open this PDF resource.'));
-  }, [id]);
+      .catch(() => setError(c.readerError));
+  }, [id, c.readerError]);
 
   if (error) {
     return (
       <div className="tool-panel">
         <p className="feedback-toast error">{error}</p>
         <Link href="/courses" className="tool-btn">
-          Back to library
+          {c.backLibrary}
         </Link>
       </div>
     );
@@ -37,28 +40,26 @@ export default function PdfReader({ id }: { id: string }) {
   return (
     <>
       <header className="tool-hero">
-        <div className="tool-kicker">[ PDF READER ]</div>
-        <h1>{title}</h1>
+        <div className="tool-kicker">{c.readerKicker}</div>
+        <h1>{title || '…'}</h1>
       </header>
       <div className="tool-input-row" style={{ marginBottom: 14 }}>
         <Link href={`/courses/${id}`} className="tool-btn">
-          Details
+          {c.details}
         </Link>
         <a className="tool-btn" href={src} target="_blank" rel="noopener noreferrer">
-          Open fullscreen tab
+          {c.openFullscreen}
         </a>
         {allowDownload && (
           <a className="tool-btn" href={`${src}?download=1`} rel="noopener">
-            Download
+            {c.download}
           </a>
         )}
       </div>
       <div className="pdf-frame-wrap">
-        <iframe title={title} src={src} />
+        <iframe title={title || 'PDF'} src={src} />
       </div>
-      <p className="tool-note">
-        If your browser cannot embed PDFs, use “Open fullscreen tab” or Download.
-      </p>
+      <p className="tool-note">{c.readerFallback}</p>
     </>
   );
 }

@@ -1,4 +1,6 @@
-/* RTL / LTR — Kurdish & Arabic */
+/* RTL / LTR — Kurdish & Arabic
+   English layout metrics are the visual source of truth.
+   Language fonts may change for text, but must not resize icons/controls. */
 
 [dir='rtl'] {
   --font-body: sans-serif;
@@ -16,7 +18,88 @@ body.locale-ar {
   font-family: var(--font-body);
 }
 
-/* Hero: same layout & logo position as EN; RTL only for slider copy */
+/* Icon boxes — identical size in every language (emoji rendered as images) */
+body.locale-ku .skill-icon,
+body.locale-ar .skill-icon,
+body.locale-en .skill-icon {
+  width: 42px !important;
+  height: 42px !important;
+  font-size: 18px !important;
+  overflow: hidden !important;
+}
+
+body.locale-ku .ufc-icon,
+body.locale-ar .ufc-icon,
+body.locale-en .ufc-icon {
+  width: 38px !important;
+  height: 38px !important;
+  font-size: 35px !important;
+  overflow: hidden !important;
+}
+
+body.locale-ku .feature-slide-icon,
+body.locale-ar .feature-slide-icon,
+body.locale-en .feature-slide-icon {
+  width: 48px !important;
+  height: 48px !important;
+  font-size: 45px !important;
+  overflow: hidden !important;
+}
+
+body.locale-ku .learn-modal-icon,
+body.locale-ar .learn-modal-icon,
+body.locale-en .learn-modal-icon {
+  width: 44px !important;
+  height: 44px !important;
+  font-size: 40px !important;
+  overflow: hidden !important;
+}
+
+body.locale-ku .feat-modal-icon,
+body.locale-ar .feat-modal-icon,
+body.locale-en .feat-modal-icon {
+  width: 52px !important;
+  height: 52px !important;
+  font-size: 48px !important;
+  overflow: hidden !important;
+}
+
+/* Never let language fonts / transforms resize emoji images */
+.emoji-glyph-img {
+  width: 1em !important;
+  height: 1em !important;
+  max-width: 1em !important;
+  max-height: 1em !important;
+  transform: none !important;
+  object-fit: contain !important;
+}
+
+.social-icon svg,
+.cta-social-btn svg,
+.member-socials .social-icon svg,
+.features-nav-btn svg,
+.team-nav-btn svg {
+  width: inherit;
+  height: inherit;
+  flex-shrink: 0;
+}
+
+.social-icon svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.member-socials .social-icon svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.cta-social-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Hero: keep EN composition; only text direction for copy where needed */
 @media (min-width: 900px) {
   [dir='rtl'] #hero {
     direction: ltr;
@@ -50,8 +133,8 @@ body.locale-ar {
   [dir='rtl'] .hero-logo-img {
     width: min(1080px, 72vw) !important;
     max-width: none;
-    margin-left: -120px !important;
-    margin-right: auto !important;
+    margin-inline-start: -120px !important;
+    margin-inline-end: auto !important;
   }
 
   [dir='rtl'] .hero-cta {
@@ -60,13 +143,15 @@ body.locale-ar {
     gap: 12px;
   }
 
+  /* Same box metrics as EN — only drop uppercase / letter-spacing for Arabic script */
   [dir='rtl'] .hero-cta .btn-primary,
   [dir='rtl'] .hero-cta .btn-secondary {
-    font-size: 0.78rem;
-    padding: 12px 20px;
+    font-size: 0.9rem;
+    padding: 14px 32px;
+    min-height: 48px;
     letter-spacing: 0;
     text-align: center;
-    max-width: 100%;
+    box-sizing: border-box;
   }
 
   [dir='rtl'] .features-slider-wrap {
@@ -89,24 +174,33 @@ body.locale-ar {
 
 @media (min-width: 1200px) {
   [dir='rtl'] .hero-logo-img {
-    margin-left: -200px !important;
-    margin-right: auto !important;
+    margin-inline-start: -200px !important;
+    margin-inline-end: auto !important;
   }
 }
 
-/* Typography — no uppercase for Arabic script */
+/* Typography — no uppercase for Arabic-script UI labels */
 [dir='rtl'] .section-tag,
 [dir='rtl'] .btn-primary,
 [dir='rtl'] .btn-secondary,
 [dir='rtl'] .feature-slide-badge,
 [dir='rtl'] .coming-soon-badge,
 [dir='rtl'] .ufc-badge,
-[dir='rtl'] .skill-hint {
+[dir='rtl'] .skill-hint,
+[dir='rtl'] .tool-btn,
+[dir='rtl'] .tools-nav a,
+[dir='rtl'] .tools-brand {
   text-transform: none;
   letter-spacing: 0;
-  font-family: var(--font-body);
 }
 
+[dir='rtl'] .section-tag,
+[dir='rtl'] .btn-primary,
+[dir='rtl'] .btn-secondary,
+[dir='rtl'] .feature-slide-badge,
+[dir='rtl'] .coming-soon-badge,
+[dir='rtl'] .ufc-badge,
+[dir='rtl'] .skill-hint,
 [dir='rtl'] .nav-links a,
 [dir='rtl'] .section-title,
 [dir='rtl'] .hero-cta,
@@ -130,8 +224,42 @@ body.locale-ar {
 [dir='rtl'] .ufc-title,
 [dir='rtl'] .stat-focus,
 [dir='rtl'] .loader-status,
-[dir='rtl'] .footer-copy {
+[dir='rtl'] .footer-copy,
+[dir='rtl'] .tool-hero,
+[dir='rtl'] .tool-hero h1,
+[dir='rtl'] .tool-lead,
+[dir='rtl'] .tool-panel,
+[dir='rtl'] .tool-panel h2,
+[dir='rtl'] .tool-panel h3,
+[dir='rtl'] .tool-label,
+[dir='rtl'] .tool-note,
+[dir='rtl'] .tool-disclaimer,
+[dir='rtl'] .tool-edu,
+[dir='rtl'] .tool-list,
+[dir='rtl'] .course-card,
+[dir='rtl'] .admin-table,
+[dir='rtl'] .empty-state,
+[dir='rtl'] .tools-nav a {
   font-family: var(--font-body);
+}
+
+/* Keep control geometry matching English */
+[dir='rtl'] .btn-primary,
+[dir='rtl'] .btn-secondary {
+  font-size: 0.9rem;
+  padding: 14px 32px;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+[dir='rtl'] .nav-links a {
+  font-size: 0.85rem;
+}
+
+[dir='rtl'] .lang-btn {
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 [dir='rtl'] .about-text,
@@ -140,16 +268,18 @@ body.locale-ar {
 [dir='rtl'] .feature-slide-desc,
 [dir='rtl'] .cta-sub,
 [dir='rtl'] .learn-modal-body,
-[dir='rtl'] .learn-modal-body p {
-  text-align: right;
-  line-height: 1.85;
+[dir='rtl'] .learn-modal-body p,
+[dir='rtl'] .tool-lead,
+[dir='rtl'] .tool-note,
+[dir='rtl'] .tool-disclaimer {
+  text-align: start;
+  line-height: 1.75;
 }
 
 [dir='rtl'] .section-header {
   text-align: center !important;
 }
 
-/* About — clearer Kurdish / Arabic typography */
 [dir='rtl'] #about .section-header {
   text-align: right !important;
 }
@@ -157,20 +287,16 @@ body.locale-ar {
 [dir='rtl'] #about .section-tag {
   flex-direction: row-reverse;
   justify-content: flex-end;
-  letter-spacing: 0;
-  font-size: 0.78rem;
   gap: 10px;
 }
 
 [dir='rtl'] #about .section-title {
   font-weight: 700;
-  line-height: 1.5;
-  font-size: clamp(1.65rem, 3.2vw, 2.45rem);
+  line-height: 1.35;
 }
 
 [dir='rtl'] #about .about-text p {
-  font-size: 1.06rem;
-  line-height: 2;
+  line-height: 1.85;
   font-weight: 400;
   color: rgba(210, 220, 230, 0.92);
   margin-bottom: 1.35rem;
@@ -187,24 +313,10 @@ body.locale-ar {
 [dir='rtl'] #about .stat-focus {
   text-transform: none;
   letter-spacing: 0;
-  line-height: 1.55;
+  line-height: 1.45;
   font-weight: 600;
-  font-size: clamp(0.92rem, 1.7vw, 1.12rem);
   text-align: center;
   font-family: var(--font-body);
-}
-
-.locale-ku #about .about-text p {
-  font-size: 1.08rem;
-  line-height: 2.05;
-}
-
-.locale-ku #about .section-title {
-  line-height: 1.55;
-}
-
-.locale-ku #about .stat-focus {
-  font-size: clamp(0.95rem, 1.75vw, 1.14rem);
 }
 
 [dir='rtl'] .skill-header {
@@ -237,20 +349,22 @@ body.locale-ar {
 }
 
 [dir='rtl'] .learn-modal-head {
-  padding-right: 0;
-  padding-left: 28px;
+  padding-inline-end: 0;
+  padding-inline-start: 28px;
 }
 
 [dir='rtl'] .learn-modal-close,
 [dir='rtl'] .feat-modal-close {
+  inset-inline-end: auto;
+  inset-inline-start: 16px;
   right: auto;
   left: 16px;
 }
 
 [dir='rtl'] .learn-modal-body {
-  padding-right: 0;
-  padding-left: 8px;
-  text-align: right;
+  padding-inline-end: 0;
+  padding-inline-start: 8px;
+  text-align: start;
 }
 
 [dir='rtl'] .nav-links a::after {
@@ -268,32 +382,22 @@ body.locale-ar {
   direction: ltr;
 }
 
-/* Team — slider LTR; Kurdish/Arabic text styling */
 [dir='rtl'] #team .member-role {
   text-transform: none;
   letter-spacing: 0;
   font-family: var(--font-body);
-  line-height: 1.65;
-  font-size: 0.88rem;
+  line-height: 1.55;
+  font-size: 0.85rem;
 }
 
 [dir='rtl'] #team .member-bio {
   font-family: var(--font-body);
-  line-height: 1.9;
+  line-height: 1.75;
   font-weight: 400;
   color: rgba(210, 220, 230, 0.92);
   text-align: center;
   unicode-bidi: plaintext;
-}
-
-.locale-ku #team .member-role {
-  font-size: 0.92rem;
-  line-height: 1.75;
-}
-
-.locale-ku #team .member-bio {
-  font-size: 1.05rem;
-  line-height: 2;
+  font-size: inherit;
   max-width: 520px;
 }
 
@@ -317,6 +421,38 @@ body.locale-ar {
   direction: rtl;
 }
 
+/* Tools shell RTL text without resizing chrome */
+[dir='rtl'] .tools-shell {
+  text-align: start;
+}
+
+[dir='rtl'] .tools-topbar {
+  direction: rtl;
+}
+
+[dir='rtl'] .tools-brand {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+[dir='rtl'] .tool-input-row {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .tool-btn,
+[dir='rtl'] .tool-input,
+[dir='rtl'] .tool-select,
+[dir='rtl'] .tool-textarea {
+  font-family: var(--font-body);
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+[dir='rtl'] .tool-btn {
+  font-size: 0.78rem;
+  padding: 12px 16px;
+}
+
 @media (max-width: 768px) {
   [dir='rtl'] .nav-links a {
     text-align: right;
@@ -324,8 +460,7 @@ body.locale-ar {
 
   [dir='rtl'] .hero-logo-img {
     width: min(400px, 94vw) !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    margin-inline: auto !important;
   }
 
   [dir='rtl'] .hero-cta {
@@ -334,10 +469,10 @@ body.locale-ar {
 
   [dir='rtl'] .hero-cta .btn-primary,
   [dir='rtl'] .hero-cta .btn-secondary {
-    font-size: 0.72rem;
+    font-size: 0.9rem;
     width: 100%;
     max-width: 320px;
+    min-height: 48px;
+    padding: 14px 32px;
   }
 }
-
-/* LTR explicit — hero logo matches EN in all locales */

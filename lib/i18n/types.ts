@@ -1,8 +1,12 @@
+import type { ToolTranslations } from './toolTypes';
+
 export type Locale = 'en' | 'ku' | 'ar';
 
 export const LOCALES: Locale[] = ['en', 'ku', 'ar'];
 
 export const RTL_LOCALES: Locale[] = ['ku', 'ar'];
+
+export type { ToolTranslations } from './toolTypes';
 
 export type LearnTopicContent = {
   tag: string;
@@ -67,6 +71,7 @@ export type Translations = {
     team: string;
     learn: string;
     tools: string;
+    courses: string;
     connect: string;
     openMenu: string;
     closeMenu: string;
@@ -118,8 +123,19 @@ export type Translations = {
     titleEm: string;
     features: Record<string, { title: string; feature: string }>;
   };
+  coursesHome: {
+    tag: string;
+    titlePrefix: string;
+    titleEm: string;
+    lead: string;
+    statusLeft: string;
+    statusRight: string;
+    cardTitle: string;
+    cardDesc: string;
+    openLibrary: string;
+  };
   footer: {
     copy: string;
   };
   features: Record<string, FeatureContent>;
-};
+} & ToolTranslations;

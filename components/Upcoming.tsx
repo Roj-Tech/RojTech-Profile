@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { UPCOMING_FEATURES_META } from '@/lib/siteData';
 import { SlideCorners } from '@/components/icons';
+import EmojiGlyph from '@/components/EmojiGlyph';
 import { useTranslations } from '@/contexts/LocaleContext';
 
 export default function Upcoming() {
@@ -30,18 +31,16 @@ export default function Upcoming() {
             <div className="loader-bar-fill loader-bar-fill-complete" />
           </div>
 
-          <div className="upcoming-grid upcoming-grid-three">
+          <div className="upcoming-grid upcoming-grid-two">
             {UPCOMING_FEATURES_META.map((feat) => {
               const content = t.upcoming.features[feat.id];
               return (
-                <Link
-                  key={feat.tag}
-                  href={feat.href}
-                  className="upcoming-feat-card"
-                >
+                <Link key={feat.tag} href={feat.href} className="upcoming-feat-card">
                   <SlideCorners prefix="ufc-corner" />
                   <div className="ufc-tag">[ {feat.tag} ]</div>
-                  <div className="ufc-icon">{feat.icon}</div>
+                  <div className="ufc-icon">
+                    <EmojiGlyph>{feat.icon}</EmojiGlyph>
+                  </div>
                   <div className="ufc-title">{content.title}</div>
                   <div className="ufc-badge ufc-badge-live">{t.common.live}</div>
                   <span className="ufc-open">{t.common.openTool}</span>

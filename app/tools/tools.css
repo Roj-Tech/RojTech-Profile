@@ -8,6 +8,18 @@
   color: var(--text);
 }
 
+body.locale-ku .tools-shell,
+body.locale-ar .tools-shell {
+  font-family: var(--font-body, sans-serif);
+}
+
+body.locale-ku .tools-shell .tools-brand,
+body.locale-ar .tools-shell .tools-brand,
+body.locale-ku .tools-shell .tool-kicker,
+body.locale-ar .tools-shell .tool-kicker {
+  font-family: 'Share Tech Mono', 'Rajdhani', monospace;
+}
+
 .tools-shell a,
 .tools-shell button,
 .tools-shell input,

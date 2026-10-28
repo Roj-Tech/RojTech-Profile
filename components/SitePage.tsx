@@ -10,6 +10,7 @@ import Team from '@/components/Team';
 import LearnSection from '@/components/LearnSection';
 import CTA from '@/components/CTA';
 import Upcoming from '@/components/Upcoming';
+import CoursesHomeSection from '@/components/CoursesHomeSection';
 import Footer from '@/components/Footer';
 
 function SiteContent() {
@@ -25,6 +26,7 @@ function SiteContent() {
       <LearnSection />
       <CTA />
       <Upcoming />
+      <CoursesHomeSection />
       <Footer />
     </>
   );

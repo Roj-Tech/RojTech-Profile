@@ -3,8 +3,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import { analyzePassword } from '@/lib/password/analyze';
 import { generatePassword } from '@/lib/password/generate';
+import { useTranslations } from '@/contexts/LocaleContext';
+import type { PasswordStrengthKey } from '@/lib/i18n/toolTypes';
+
+const STRENGTH_KEYS: PasswordStrengthKey[] = [
+  'veryWeak',
+  'weak',
+  'fair',
+  'strong',
+  'veryStrong',
+];
 
 export default function PasswordCheckerTool() {
+  const t = useTranslations();
+  const pc = t.passwordChecker;
   const [password, setPassword] = useState('');
   const [visible, setVisible] = useState(false);
   const [copied, setCopied] = useState<'ok' | 'err' | null>(null);
@@ -21,6 +33,20 @@ export default function PasswordCheckerTool() {
     () => (password ? analyzePassword(password) : null),
     [password],
   );
+
+  const recommendations = useMemo(() => {
+    if (!analysis) return [];
+    const tips = [];
+    if (analysis.isCommonPassword) tips.push(pc.tips.common);
+    if (!analysis.checks.length) tips.push(pc.tips.length);
+    if (!analysis.checks.hasUpper || !analysis.checks.hasLower) tips.push(pc.tips.caseMix);
+    if (!analysis.checks.hasNumber) tips.push(pc.tips.numbers);
+    if (!analysis.checks.hasSymbol) tips.push(pc.tips.symbols);
+    if (analysis.checks.hasRepeat) tips.push(pc.tips.repeats);
+    if (analysis.checks.hasSequence) tips.push(pc.tips.sequences);
+    tips.push(pc.tips.reuse, pc.tips.manager, pc.tips.personal);
+    return tips;
+  }, [analysis, pc.tips]);
 
   useEffect(() => {
     return () => {
@@ -49,29 +75,30 @@ export default function PasswordCheckerTool() {
       setPassword(next);
       setGenError(null);
       setVisible(true);
-    } catch (err) {
-      setGenError(err instanceof Error ? err.message : 'Could not generate password');
+    } catch {
+      setGenError(pc.genNeedCharset);
     }
   }
+
+  const strengthLabel = analysis
+    ? pc.strengthLabels[STRENGTH_KEYS[analysis.score]]
+    : '';
 
   return (
     <>
       <header className="tool-hero">
-        <div className="tool-kicker">[ MODULE_01 · LOCAL ANALYSIS ]</div>
+        <div className="tool-kicker">{pc.kicker}</div>
         <h1>
-          Password <em>Checker</em>
+          {pc.title} <em>{pc.titleEm}</em>
         </h1>
-        <p className="tool-lead">
-          Analyze and generate passwords entirely in your browser. Nothing you type is sent to
-          RojTech servers, stored, or logged.
-        </p>
+        <p className="tool-lead">{pc.lead}</p>
       </header>
 
       <div className="tool-grid-2">
         <section className="tool-panel" aria-labelledby="pw-input-heading">
-          <h2 id="pw-input-heading">Password input</h2>
+          <h2 id="pw-input-heading">{pc.inputHeading}</h2>
           <label className="tool-label" htmlFor="password-input">
-            Enter a password to analyze
+            {pc.inputLabel}
           </label>
           <div className="tool-input-row">
             <input
@@ -83,7 +110,7 @@ export default function PasswordCheckerTool() {
               spellCheck={false}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Type or generate a password"
+              placeholder={pc.inputPlaceholder}
             />
             <button
               type="button"
@@ -91,10 +118,10 @@ export default function PasswordCheckerTool() {
               onClick={() => setVisible((v) => !v)}
               aria-pressed={visible}
             >
-              {visible ? 'Hide' : 'Show'}
+              {visible ? pc.hide : pc.show}
             </button>
             <button type="button" className="tool-btn tool-btn-orange" onClick={clearPassword}>
-              Clear
+              {pc.clear}
             </button>
             <button
               type="button"
@@ -102,75 +129,70 @@ export default function PasswordCheckerTool() {
               onClick={() => copyText(password)}
               disabled={!password}
             >
-              Copy
+              {pc.copy}
             </button>
           </div>
-          {copied === 'ok' && <p className="feedback-toast">Copied to clipboard</p>}
-          {copied === 'err' && (
-            <p className="feedback-toast error">Clipboard blocked — copy manually</p>
-          )}
+          {copied === 'ok' && <p className="feedback-toast">{pc.copied}</p>}
+          {copied === 'err' && <p className="feedback-toast error">{pc.copyFailed}</p>}
 
           {analysis && (
             <div style={{ marginTop: 18 }}>
               <h3>
-                Strength: {analysis.label}{' '}
+                {pc.strength}: {strengthLabel}{' '}
                 <span style={{ color: 'var(--text-dim)', fontWeight: 400 }}>
-                  (score {analysis.score}/4)
+                  {pc.scoreOf(analysis.score)}
                 </span>
               </h3>
               <div className="strength-meter" aria-hidden>
                 <span className={`strength-${analysis.score}`} />
               </div>
               <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)' }}>
-                Estimated online guessing resistance (heuristic): {analysis.crackTimeDisplay}
+                {pc.crackTime} {analysis.crackTimeDisplay}
               </p>
               {analysis.isCommonPassword && (
-                <p className="feedback-toast error">This matches a known common password.</p>
-              )}
-              {analysis.feedback.warning && (
-                <p className="tool-note">{analysis.feedback.warning}</p>
+                <p className="feedback-toast error">{pc.commonPassword}</p>
               )}
               <div className="tool-checks">
                 <div className={`tool-check ${analysis.checks.length ? 'ok' : 'bad'}`}>
-                  Length ≥ 12
+                  {pc.checks.length}
                 </div>
                 <div className={`tool-check ${analysis.checks.hasUpper ? 'ok' : 'bad'}`}>
-                  Uppercase
+                  {pc.checks.upper}
                 </div>
                 <div className={`tool-check ${analysis.checks.hasLower ? 'ok' : 'bad'}`}>
-                  Lowercase
+                  {pc.checks.lower}
                 </div>
                 <div className={`tool-check ${analysis.checks.hasNumber ? 'ok' : 'bad'}`}>
-                  Number
+                  {pc.checks.number}
                 </div>
                 <div className={`tool-check ${analysis.checks.hasSymbol ? 'ok' : 'bad'}`}>
-                  Symbol
+                  {pc.checks.symbol}
                 </div>
                 <div className={`tool-check ${!analysis.checks.hasRepeat ? 'ok' : 'bad'}`}>
-                  No long repeats
+                  {pc.checks.noRepeat}
                 </div>
                 <div className={`tool-check ${!analysis.checks.hasSequence ? 'ok' : 'bad'}`}>
-                  No sequences
+                  {pc.checks.noSequence}
                 </div>
               </div>
-              <h3>Recommendations</h3>
+              <h3>{pc.recommendationsHeading}</h3>
               <ul className="tool-list">
-                {analysis.recommendations.map((rec) => (
+                {recommendations.map((rec) => (
                   <li key={rec.title}>
                     <strong>{rec.title}</strong>
                     {rec.why}
                   </li>
                 ))}
               </ul>
-              <p className="tool-disclaimer">{analysis.disclaimer}</p>
+              <p className="tool-disclaimer">{pc.disclaimer}</p>
             </div>
           )}
         </section>
 
         <section className="tool-panel" aria-labelledby="pw-gen-heading">
-          <h2 id="pw-gen-heading">Strong password generator</h2>
+          <h2 id="pw-gen-heading">{pc.generatorHeading}</h2>
           <label className="tool-label" htmlFor="gen-length">
-            Length: {genLength}
+            {pc.lengthLabel(genLength)}
           </label>
           <input
             id="gen-length"
@@ -184,10 +206,10 @@ export default function PasswordCheckerTool() {
           <div className="gen-options">
             {(
               [
-                ['uppercase', 'Uppercase A–Z'],
-                ['lowercase', 'Lowercase a–z'],
-                ['numbers', 'Numbers 0–9'],
-                ['symbols', 'Symbols'],
+                ['uppercase', pc.optUpper],
+                ['lowercase', pc.optLower],
+                ['numbers', pc.optNumbers],
+                ['symbols', pc.optSymbols],
               ] as const
             ).map(([key, label]) => (
               <label key={key}>
@@ -202,7 +224,7 @@ export default function PasswordCheckerTool() {
           </div>
           <div className="tool-input-row">
             <button type="button" className="tool-btn tool-btn-primary" onClick={onGenerate}>
-              Generate
+              {pc.generate}
             </button>
             <button
               type="button"
@@ -210,50 +232,23 @@ export default function PasswordCheckerTool() {
               onClick={() => copyText(password)}
               disabled={!password}
             >
-              Copy generated
+              {pc.copyGenerated}
             </button>
           </div>
           {genError && <p className="feedback-toast error">{genError}</p>}
-          <p className="tool-note">
-            Uses <code>crypto.getRandomValues()</code> in your browser. Regenerate until you are
-            ready, then store it in a password manager.
-          </p>
+          <p className="tool-note">{pc.genNote}</p>
         </section>
       </div>
 
       <section className="tool-panel" aria-labelledby="pw-edu">
-        <h2 id="pw-edu">Learn: stronger passwords</h2>
+        <h2 id="pw-edu">{pc.eduHeading}</h2>
         <div className="tool-edu">
-          <article>
-            <h3>What makes a password strong?</h3>
-            <p>
-              Length, uniqueness, and unpredictability matter more than swapping letters for
-              symbols in a short word. Random long passphrases or manager-generated secrets resist
-              guessing far better than clever short passwords.
-            </p>
-          </article>
-          <article>
-            <h3>Why length matters</h3>
-            <p>
-              Every extra character multiplies the search space. A long password can remain strong
-              even without every character class, while a short mixed-character password can still
-              be cracked quickly.
-            </p>
-          </article>
-          <article>
-            <h3>Why reuse is dangerous</h3>
-            <p>
-              If one site leaks credentials, attackers try the same password elsewhere. Unique
-              passwords contain breaches to a single account.
-            </p>
-          </article>
-          <article>
-            <h3>Password managers & MFA</h3>
-            <p>
-              Managers create and remember unique secrets for you. Multi-factor authentication adds
-              a second check so a stolen password alone is often not enough.
-            </p>
-          </article>
+          {pc.edu.map((item) => (
+            <article key={item.title}>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
         </div>
       </section>
     </>

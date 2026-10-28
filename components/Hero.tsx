@@ -5,6 +5,7 @@ import { FEATURE_SLIDES_META } from '@/lib/siteData';
 import { useSlider } from '@/hooks/useSlider';
 import { ChevronNext, ChevronPrev, SlideCorners } from '@/components/icons';
 import MatrixRain from '@/components/MatrixRain';
+import EmojiGlyph from '@/components/EmojiGlyph';
 import { useHeroReveal } from '@/hooks/useScrollReveal';
 import { useTranslations } from '@/contexts/LocaleContext';
 
@@ -65,7 +66,9 @@ export default function Hero() {
                     <div className="feature-slide" key={slide.tag}>
                       <SlideCorners prefix="feature-slide-corner" />
                       <div className="feature-slide-tag">[ {slide.tag} ]</div>
-                      <div className="feature-slide-icon">{slide.icon}</div>
+                      <div className="feature-slide-icon">
+                        <EmojiGlyph>{slide.icon}</EmojiGlyph>
+                      </div>
                       <div className="feature-slide-title">{content.title}</div>
                       <div className="feature-slide-desc">{content.desc}</div>
                       <Link

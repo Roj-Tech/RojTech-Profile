@@ -1,6 +1,8 @@
 import type { Translations } from '../types';
+import { toolsAr } from './toolsAr';
 
 export const ar: Translations = {
+  ...toolsAr,
   meta: {
     title: 'RojTech — منصة التعلم الأمني',
     description:
@@ -40,6 +42,7 @@ export const ar: Translations = {
     team: 'الفريق',
     learn: 'تعلّم',
     tools: 'الأدوات',
+    courses: 'الدورات',
     connect: 'تواصل',
     openMenu: 'فتح القائمة',
     closeMenu: 'إغلاق القائمة',
@@ -219,15 +222,23 @@ export const ar: Translations = {
         title: 'فاحص كلمات المرور',
         feature: 'فاحص كلمات المرور',
       },
-      courses: {
-        title: 'مكتبة الدورات',
-        feature: 'مكتبة الدورات',
-      },
       'phishing-detector': {
         title: 'كاشف التصيُّد',
         feature: 'كاشف التصيُّد',
       },
     },
+  },
+  coursesHome: {
+    tag: 'مركز التعلّم',
+    titlePrefix: '',
+    titleEm: 'الدورات',
+    lead: 'مكتبة مخصّصة لموارد PDF التعليمية — منفصلة عن أدوات الأمن.',
+    statusLeft: 'المكتبة_متاحة',
+    statusRight: 'جاهز',
+    cardTitle: 'مكتبة الدورات',
+    cardDesc:
+      'تصفّح المواد المنشورة في البرمجة والأمن السيبراني والشبكات وهندسة البرمجيات.',
+    openLibrary: 'فتح المكتبة ←',
   },
   footer: {
     copy: '© 2026 RojTech Platform · جميع الحقوق محفوظة',
@@ -236,10 +247,6 @@ export const ar: Translations = {
     'password-checker': {
       title: 'فاحص كلمات المرور',
       desc: 'حلّل قوة كلمة المرور داخل متصفحك فقط — الطول والأنماط والكلمات الشائعة ونصائح التقوية مع مولّد آمن.',
-    },
-    courses: {
-      title: 'مكتبة الدورات',
-      desc: 'تصفّح موارد التعلّم المنشورة بصيغة PDF في البرمجة والأمن السيبراني والشبكات وهندسة البرمجيات.',
     },
     'phishing-detector': {
       title: 'كاشف التصيُّد',

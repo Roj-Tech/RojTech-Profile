@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import type { CourseCategory, PublicCourse } from '@/lib/courses/types';
+import { useTranslations } from '@/contexts/LocaleContext';
 
 type ApiResponse = {
   courses: PublicCourse[];
@@ -10,6 +11,8 @@ type ApiResponse = {
 };
 
 export default function CoursesLibrary() {
+  const t = useTranslations();
+  const c = t.courses;
   const [data, setData] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
@@ -32,76 +35,87 @@ export default function CoursesLibrary() {
         if (!res.ok) throw new Error('Failed to load courses');
         return res.json() as Promise<ApiResponse>;
       })
-      .then(setData)
+      .then((payload) => {
+        setData(payload);
+        setError(null);
+      })
       .catch((err) => {
-        if (err.name !== 'AbortError') setError('Could not load the courses library.');
+        if (err.name !== 'AbortError') setError(c.loadError);
       });
     return () => controller.abort();
-  }, [search, category, subject, difficulty, sort]);
+  }, [search, category, subject, difficulty, sort, c.loadError]);
 
   const recent = useMemo(() => (data?.courses || []).slice(0, 3), [data]);
+
+  function categoryName(id: string) {
+    return c.categories[id] || data?.categories.find((cat) => cat.id === id)?.name || id;
+  }
+
+  function difficultyLabel(value: string) {
+    if (value === 'Beginner') return c.beginner;
+    if (value === 'Intermediate') return c.intermediate;
+    if (value === 'Advanced') return c.advanced;
+    return value;
+  }
 
   return (
     <>
       <header className="tool-hero">
-        <div className="tool-kicker">[ MODULE_02 · LEARNING LIBRARY ]</div>
+        <div className="tool-kicker">{c.kicker}</div>
         <h1>
-          Courses <em>Library</em>
+          {c.title} <em>{c.titleEm}</em>
         </h1>
-        <p className="tool-lead">
-          Browse published PDF learning resources across programming, cybersecurity, networking,
-          and software engineering.
-        </p>
+        <p className="tool-lead">{c.lead}</p>
       </header>
 
       <section className="tool-panel">
         <div className="course-filters">
           <input
             className="tool-input"
-            placeholder="Search title or description"
+            placeholder={c.searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            aria-label="Search courses"
+            aria-label={c.searchPlaceholder}
           />
           <select
             className="tool-select"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            aria-label="Filter by category"
+            aria-label={c.allCategories}
           >
-            <option value="">All categories</option>
-            {(data?.categories || []).map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
+            <option value="">{c.allCategories}</option>
+            {(data?.categories || []).map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {categoryName(cat.id)}
               </option>
             ))}
           </select>
           <input
             className="tool-input"
-            placeholder="Language / subject"
+            placeholder={c.subjectPlaceholder}
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            aria-label="Filter by subject"
+            aria-label={c.subjectPlaceholder}
           />
           <select
             className="tool-select"
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
-            aria-label="Filter by difficulty"
+            aria-label={c.allLevels}
           >
-            <option value="">All levels</option>
-            <option>Beginner</option>
-            <option>Intermediate</option>
-            <option>Advanced</option>
+            <option value="">{c.allLevels}</option>
+            <option value="Beginner">{c.beginner}</option>
+            <option value="Intermediate">{c.intermediate}</option>
+            <option value="Advanced">{c.advanced}</option>
           </select>
           <select
             className="tool-select"
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            aria-label="Sort courses"
+            aria-label={c.sortNewest}
           >
-            <option value="newest">Newest</option>
-            <option value="title">A–Z</option>
+            <option value="newest">{c.sortNewest}</option>
+            <option value="title">{c.sortTitle}</option>
           </select>
         </div>
 
@@ -110,30 +124,40 @@ export default function CoursesLibrary() {
         {!error && !data && (
           <p className="tool-note">
             <span className="loading-dot" />
-            Loading library…
+            {c.loading}
           </p>
         )}
 
         {data && recent.length > 0 && !search && !category && !subject && !difficulty && (
           <div style={{ marginBottom: 22 }}>
-            <h2>Recently added</h2>
+            <h2>{c.recentlyAdded}</h2>
             <div className="courses-grid" style={{ marginTop: 12 }}>
               {recent.map((course) => (
-                <CourseCard key={`recent-${course.id}`} course={course} categories={data.categories} />
+                <CourseCard
+                  key={`recent-${course.id}`}
+                  course={course}
+                  categoryLabel={categoryName(course.categoryId)}
+                  difficultyLabel={difficultyLabel(course.difficulty)}
+                />
               ))}
             </div>
           </div>
         )}
 
-        <h2>All resources</h2>
+        <h2>{c.allResources}</h2>
         {data && data.courses.length === 0 ? (
           <div className="empty-state" style={{ marginTop: 12 }}>
-            No published resources match these filters yet.
+            {c.empty}
           </div>
         ) : (
           <div className="courses-grid" style={{ marginTop: 12 }}>
             {(data?.courses || []).map((course) => (
-              <CourseCard key={course.id} course={course} categories={data?.categories || []} />
+              <CourseCard
+                key={course.id}
+                course={course}
+                categoryLabel={categoryName(course.categoryId)}
+                difficultyLabel={difficultyLabel(course.difficulty)}
+              />
             ))}
           </div>
         )}
@@ -144,16 +168,17 @@ export default function CoursesLibrary() {
 
 function CourseCard({
   course,
-  categories,
+  categoryLabel,
+  difficultyLabel,
 }: {
   course: PublicCourse;
-  categories: CourseCategory[];
+  categoryLabel: string;
+  difficultyLabel: string;
 }) {
-  const cat = categories.find((c) => c.id === course.categoryId)?.name || course.categoryId;
   return (
     <Link href={`/courses/${course.id}`} className="course-card">
       <div className="course-meta">
-        {cat} · {course.difficulty}
+        {categoryLabel} · {difficultyLabel}
       </div>
       <h3>{course.title}</h3>
       <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', flex: 1 }}>

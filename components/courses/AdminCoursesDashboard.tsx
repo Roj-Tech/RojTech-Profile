@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import type { CourseCategory, CourseResource } from '@/lib/courses/types';
+import { useTranslations } from '@/contexts/LocaleContext';
 
 type FormState = {
   title: string;
@@ -27,6 +28,9 @@ const emptyForm: FormState = {
 };
 
 export default function AdminCoursesDashboard() {
+  const t = useTranslations();
+  const a = t.admin;
+  const c = t.courses;
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -73,7 +77,7 @@ export default function AdminCoursesDashboard() {
     });
     const data = await res.json();
     if (!res.ok) {
-      setLoginError(data.error || 'Login failed');
+      setLoginError(data.error || a.saveFailed);
       return;
     }
     setPassword('');
@@ -101,15 +105,15 @@ export default function AdminCoursesDashboard() {
         body,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Save failed');
-      setMessage(editingId ? 'Resource updated.' : 'Resource created.');
+      if (!res.ok) throw new Error(data.error || a.saveFailed);
+      setMessage(editingId ? a.updated : a.created);
       setForm(emptyForm);
       setPdf(null);
       setCover(null);
       setEditingId(null);
       await refresh();
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : 'Save failed');
+      setMessage(err instanceof Error ? err.message : a.saveFailed);
     } finally {
       setBusy(false);
     }
@@ -140,16 +144,27 @@ export default function AdminCoursesDashboard() {
   }
 
   async function remove(course: CourseResource) {
-    if (!window.confirm(`Delete “${course.title}”? This cannot be undone.`)) return;
+    if (!window.confirm(a.deleteConfirm(course.title))) return;
     await fetch(`/api/admin/courses/${course.id}`, { method: 'DELETE' });
     await refresh();
+  }
+
+  function categoryLabel(id: string) {
+    return c.categories[id] || categories.find((cat) => cat.id === id)?.name || id;
+  }
+
+  function difficultyLabel(value: string) {
+    if (value === 'Beginner') return c.beginner;
+    if (value === 'Intermediate') return c.intermediate;
+    if (value === 'Advanced') return c.advanced;
+    return value;
   }
 
   if (authed === null) {
     return (
       <p className="tool-note">
         <span className="loading-dot" />
-        Checking admin session…
+        {a.checkingSession}
       </p>
     );
   }
@@ -157,14 +172,11 @@ export default function AdminCoursesDashboard() {
   if (!authed) {
     return (
       <section className="tool-panel" style={{ maxWidth: 480 }}>
-        <h2>Admin login</h2>
-        <p className="tool-note">
-          Configure <code>ADMIN_PASSWORD</code> and <code>SESSION_SECRET</code> in your environment.
-          There is no default password.
-        </p>
+        <h2>{a.loginTitle}</h2>
+        <p className="tool-note">{a.loginHint}</p>
         <form onSubmit={login}>
           <label className="tool-label" htmlFor="admin-user">
-            Username
+            {a.username}
           </label>
           <input
             id="admin-user"
@@ -176,7 +188,7 @@ export default function AdminCoursesDashboard() {
             style={{ width: '100%', marginBottom: 12 }}
           />
           <label className="tool-label" htmlFor="admin-pass">
-            Password
+            {a.password}
           </label>
           <input
             id="admin-pass"
@@ -190,7 +202,7 @@ export default function AdminCoursesDashboard() {
           />
           {loginError && <p className="feedback-toast error">{loginError}</p>}
           <button type="submit" className="tool-btn tool-btn-primary">
-            Sign in
+            {a.signIn}
           </button>
         </form>
       </section>
@@ -200,26 +212,26 @@ export default function AdminCoursesDashboard() {
   return (
     <>
       <header className="tool-hero">
-        <div className="tool-kicker">[ ADMIN · COURSES ]</div>
+        <div className="tool-kicker">{a.kicker}</div>
         <h1>
-          Manage <em>Library</em>
+          {a.title} <em>{a.titleEm}</em>
         </h1>
-        <p className="tool-lead">Signed in as {username}</p>
+        <p className="tool-lead">{a.signedInAs(username)}</p>
         <div className="tool-input-row">
           <button type="button" className="tool-btn tool-btn-orange" onClick={() => void logout()}>
-            Sign out
+            {a.signOut}
           </button>
           <Link href="/courses" className="tool-btn">
-            View public library
+            {a.viewPublic}
           </Link>
         </div>
       </header>
 
       <section className="tool-panel">
-        <h2>{editingId ? 'Edit resource' : 'Upload PDF resource'}</h2>
+        <h2>{editingId ? a.editHeading : a.uploadHeading}</h2>
         <form onSubmit={(e) => void saveCourse(e)}>
           <label className="tool-label" htmlFor="title">
-            Title
+            {a.fieldTitle}
           </label>
           <input
             id="title"
@@ -230,7 +242,7 @@ export default function AdminCoursesDashboard() {
             style={{ width: '100%', marginBottom: 10 }}
           />
           <label className="tool-label" htmlFor="description">
-            Description
+            {a.fieldDescription}
           </label>
           <textarea
             id="description"
@@ -248,15 +260,15 @@ export default function AdminCoursesDashboard() {
               onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
               required
             >
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {categoryLabel(cat.id)}
                 </option>
               ))}
             </select>
             <input
               className="tool-input"
-              placeholder="Subject / language"
+              placeholder={a.fieldSubject}
               required
               value={form.subject}
               onChange={(e) => setForm({ ...form, subject: e.target.value })}
@@ -271,13 +283,13 @@ export default function AdminCoursesDashboard() {
                 })
               }
             >
-              <option>Beginner</option>
-              <option>Intermediate</option>
-              <option>Advanced</option>
+              <option value="Beginner">{c.beginner}</option>
+              <option value="Intermediate">{c.intermediate}</option>
+              <option value="Advanced">{c.advanced}</option>
             </select>
             <input
               className="tool-input"
-              placeholder="Author (optional)"
+              placeholder={a.fieldAuthor}
               value={form.author}
               onChange={(e) => setForm({ ...form, author: e.target.value })}
             />
@@ -289,7 +301,7 @@ export default function AdminCoursesDashboard() {
                 checked={form.published}
                 onChange={(e) => setForm({ ...form, published: e.target.checked })}
               />
-              Published
+              {a.published}
             </label>
             <label>
               <input
@@ -297,11 +309,11 @@ export default function AdminCoursesDashboard() {
                 checked={form.allowDownload}
                 onChange={(e) => setForm({ ...form, allowDownload: e.target.checked })}
               />
-              Allow download
+              {a.allowDownload}
             </label>
           </div>
           <label className="tool-label" htmlFor="pdf">
-            PDF file {editingId ? '(optional replace)' : ''}
+            {editingId ? a.pdfReplace : a.pdfFile}
           </label>
           <input
             id="pdf"
@@ -312,7 +324,7 @@ export default function AdminCoursesDashboard() {
             style={{ marginBottom: 10, color: 'var(--text)' }}
           />
           <label className="tool-label" htmlFor="cover">
-            Cover image (optional JPEG/PNG)
+            {a.coverOptional}
           </label>
           <input
             id="cover"
@@ -323,7 +335,7 @@ export default function AdminCoursesDashboard() {
           />
           <div className="tool-input-row">
             <button type="submit" className="tool-btn tool-btn-primary" disabled={busy}>
-              {busy ? 'Saving…' : editingId ? 'Update resource' : 'Upload resource'}
+              {busy ? a.saving : editingId ? a.update : a.save}
             </button>
             {editingId && (
               <button
@@ -336,7 +348,7 @@ export default function AdminCoursesDashboard() {
                   setCover(null);
                 }}
               >
-                Cancel edit
+                {a.cancelEdit}
               </button>
             )}
           </div>
@@ -345,18 +357,18 @@ export default function AdminCoursesDashboard() {
       </section>
 
       <section className="tool-panel">
-        <h2>Existing resources</h2>
+        <h2>{a.existing}</h2>
         {courses.length === 0 ? (
-          <div className="empty-state">No uploads yet.</div>
+          <div className="empty-state">{a.noUploads}</div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th>Status</th>
-                  <th>Meta</th>
-                  <th>Actions</th>
+                  <th>{a.fieldTitle}</th>
+                  <th>{a.status}</th>
+                  <th>{a.meta}</th>
+                  <th>{a.actions}</th>
                 </tr>
               </thead>
               <tbody>
@@ -366,33 +378,33 @@ export default function AdminCoursesDashboard() {
                       <strong style={{ color: '#fff' }}>{course.title}</strong>
                       <div className="course-meta">{course.pdfOriginalName}</div>
                     </td>
-                    <td>{course.published ? 'Published' : 'Draft'}</td>
+                    <td>{course.published ? a.publishedStatus : a.draft}</td>
                     <td>
-                      {course.difficulty}
+                      {difficultyLabel(course.difficulty)}
                       <br />
                       {course.subject}
                     </td>
                     <td>
                       <div className="tool-input-row">
                         <button type="button" className="tool-btn" onClick={() => startEdit(course)}>
-                          Edit
+                          {a.edit}
                         </button>
                         <button
                           type="button"
                           className="tool-btn"
                           onClick={() => void togglePublish(course)}
                         >
-                          {course.published ? 'Unpublish' : 'Publish'}
+                          {course.published ? a.unpublish : a.publish}
                         </button>
                         <Link href={`/courses/${course.id}/read`} className="tool-btn">
-                          Preview
+                          {a.preview}
                         </Link>
                         <button
                           type="button"
                           className="tool-btn tool-btn-orange"
                           onClick={() => void remove(course)}
                         >
-                          Delete
+                          {a.delete}
                         </button>
                       </div>
                     </td>

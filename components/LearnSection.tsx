@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { LEARN_CARDS_META } from '@/lib/siteData';
 import { SlideCorners } from '@/components/icons';
+import EmojiGlyph from '@/components/EmojiGlyph';
 import { useTranslations } from '@/contexts/LocaleContext';
 
 export default function LearnSection() {
@@ -66,7 +67,9 @@ export default function LearnSection() {
                 }}
               >
                 <div className="skill-header">
-                  <div className="skill-icon">{card.icon}</div>
+                  <div className="skill-icon">
+                    <EmojiGlyph>{card.icon}</EmojiGlyph>
+                  </div>
                   <div>
                     <div className="skill-name">{content.name}</div>
                     <div className="skill-sub">{content.sub}</div>
@@ -103,7 +106,9 @@ export default function LearnSection() {
           {topic && (
             <>
               <div className="learn-modal-head">
-                <div className="learn-modal-icon">{topicIcon}</div>
+                <div className="learn-modal-icon">
+                  {topicIcon ? <EmojiGlyph>{topicIcon}</EmojiGlyph> : null}
+                </div>
                 <div className="learn-modal-tag">[ {topic.tag} ]</div>
                 <h3 className="learn-modal-title" id="learnModalTitle">
                   {topic.title}

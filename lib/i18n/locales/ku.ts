@@ -1,6 +1,8 @@
 import type { Translations } from '../types';
+import { toolsKu } from './toolsKu';
 
 export const ku: Translations = {
+  ...toolsKu,
   meta: {
     title: 'RojTech — پلاتفۆرمی فێربوونی ئاسایش',
     description:
@@ -40,6 +42,7 @@ export const ku: Translations = {
     team: 'تیم',
     learn: 'فێربوون',
     tools: 'ئامرازەکان',
+    courses: 'کۆرسەکان',
     connect: 'پەیوەندی',
     openMenu: 'کردنەوەی مێنوو',
     closeMenu: 'داخستنی مێنوو',
@@ -219,15 +222,23 @@ export const ku: Translations = {
         title: 'پشکنەری تێپەڕەوشە',
         feature: 'پشکنەری تێپەڕەوشە',
       },
-      courses: {
-        title: 'کتێبخانەی کۆرس',
-        feature: 'کتێبخانەی کۆرس',
-      },
       'phishing-detector': {
         title: 'دۆزەرەوەی فیشینگ',
         feature: 'دۆزەرەوەی فیشینگ',
       },
     },
+  },
+  coursesHome: {
+    tag: 'ناوەندی فێربوون',
+    titlePrefix: '',
+    titleEm: 'کۆرسەکان',
+    lead: 'کتێبخانەی تایبەتی سەرچاوەی PDF — جیا لە ئامرازەکانی ئاسایش.',
+    statusLeft: 'کتێبخانە_چالاکە',
+    statusRight: 'ئامادە',
+    cardTitle: 'کتێبخانەی کۆرس',
+    cardDesc:
+      'گەڕان بە سەرچاوە بڵاوکراوەکان لە پرۆگرامسازی، سایبەر ئاسایش، تۆڕ و ئەندازیاری نەرمەواڵە.',
+    openLibrary: 'کردنەوەی کتێبخانە ←',
   },
   footer: {
     copy: '© 2026 RojTech Platform · هەموو مافەکان پارێزراون',
@@ -236,10 +247,6 @@ export const ku: Translations = {
     'password-checker': {
       title: 'پشکنەری تێپەڕەوشە',
       desc: 'بەهێزی تێپەڕەوشە لە ناو وێبگەڕەکەتدا شیکار بکە — درێژی، شێوازەکان، تێپەڕەوشەی باو، و ئامۆژگاری بەهێزکردن لەگەڵ دروستکەری پارێزراو.',
-    },
-    courses: {
-      title: 'کتێبخانەی کۆرس',
-      desc: 'گەڕان بە سەرچاوەکانی فێربوونی PDF لە پرۆگرامسازی، سایبەر ئاسایش، تۆڕ، و ئەندازیاری نەرمەواڵە.',
     },
     'phishing-detector': {
       title: 'دۆزەرەوەی فیشینگ',

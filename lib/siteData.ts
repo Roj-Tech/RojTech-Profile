@@ -20,10 +20,10 @@ export type FeatureSlideMeta = {
   href: string;
 };
 
+/** Hero slider — security tools only */
 export const FEATURE_SLIDES_META: FeatureSlideMeta[] = [
   { id: 'password-checker', tag: 'FEATURE_01', icon: '🔐', href: '/tools/password-checker' },
-  { id: 'courses', tag: 'FEATURE_02', icon: '📚', href: '/courses' },
-  { id: 'phishing-detector', tag: 'FEATURE_03', icon: '🎣', href: '/tools/phishing-detector' },
+  { id: 'phishing-detector', tag: 'FEATURE_02', icon: '🎣', href: '/tools/phishing-detector' },
 ];
 
 export type UpcomingFeatureMeta = {
@@ -33,11 +33,19 @@ export type UpcomingFeatureMeta = {
   href: string;
 };
 
+/** Security Modules section — password + phishing only */
 export const UPCOMING_FEATURES_META: UpcomingFeatureMeta[] = [
   { id: 'password-checker', tag: 'MODULE_01', icon: '🔐', href: '/tools/password-checker' },
-  { id: 'courses', tag: 'MODULE_02', icon: '📚', href: '/courses' },
-  { id: 'phishing-detector', tag: 'MODULE_03', icon: '🎣', href: '/tools/phishing-detector' },
+  { id: 'phishing-detector', tag: 'MODULE_02', icon: '🎣', href: '/tools/phishing-detector' },
 ];
+
+/** Dedicated Courses homepage section */
+export const COURSES_HOME_META: UpcomingFeatureMeta = {
+  id: 'courses',
+  tag: 'LIBRARY_01',
+  icon: '📚',
+  href: '/courses',
+};
 
 export type TeamMemberMeta = {
   id: string;

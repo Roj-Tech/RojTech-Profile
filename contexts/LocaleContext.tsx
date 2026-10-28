@@ -28,13 +28,15 @@ type LocaleContextValue = {
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('en');
+  const [locale, setLocaleState] = useState<Locale>(() => getStoredLocale() || 'en');
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const stored = getStoredLocale();
-    if (stored) setLocaleState(stored);
+    if (stored && stored !== locale) setLocaleState(stored);
     setReady(true);
+    // Sync once on mount from storage (shared across homepage + tools providers).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setLocale = useCallback((next: Locale) => {
