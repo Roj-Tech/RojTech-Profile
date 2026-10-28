@@ -17,9 +17,17 @@ export const en: Translations = {
     goToMember: (n) => `Go to team member ${n}`,
     learnAbout: (topic) => `Learn about ${topic}`,
     featModalMsg: 'We are working to give you the best',
-    deploying: 'DEPLOYING_V2.0',
-    complete: '65% COMPLETE',
-    sliderBoxLabel: 'UPCOMING_FEATURES',
+    deploying: 'MODULES_ONLINE',
+    complete: '100% READY',
+    sliderBoxLabel: 'LIVE_TOOLS',
+    openTool: 'Open tool →',
+    live: 'LIVE',
+  },
+  toolsNav: {
+    home: 'Home',
+    passwordChecker: 'Password Checker',
+    phishingDetector: 'Phishing Detector',
+    courses: 'Courses',
   },
   lang: {
     label: 'Language',
@@ -31,6 +39,7 @@ export const en: Translations = {
     about: 'About',
     team: 'Team',
     learn: 'Learn',
+    tools: 'Tools',
     connect: 'Connect',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
@@ -39,7 +48,7 @@ export const en: Translations = {
     logoAlt: 'RojTech Logo',
     joinCommunity: 'Join Our Community',
     meetTeam: 'Meet The Team',
-    featuresLabel: 'New Features Are Coming, Stay Tuned',
+    featuresLabel: 'Security Tools Now Live',
   },
   about: {
     tag: 'About The Platform',
@@ -202,21 +211,17 @@ export const en: Translations = {
     viewGithub: 'View RojTech on GitHub',
   },
   upcoming: {
-    tag: 'Stay Tuned',
-    titlePrefix: 'New ',
-    titleEm: 'Features',
+    tag: 'Tools Online',
+    titlePrefix: 'Security ',
+    titleEm: 'Modules',
     features: {
       'password-checker': {
         title: 'Password Checker',
         feature: 'Password Checker',
       },
-      'project-x': {
-        title: 'Project X',
-        feature: 'Project X',
-      },
       courses: {
-        title: 'Courses',
-        feature: 'Courses',
+        title: 'Courses Library',
+        feature: 'Courses Library',
       },
       'phishing-detector': {
         title: 'Phishing Detector',
@@ -230,20 +235,15 @@ export const en: Translations = {
   features: {
     'password-checker': {
       title: 'Password Checker',
-      desc: 'Instantly analyze the strength of any password — entropy score, breach detection, and hardening tips powered by real-time analysis.',
+      desc: 'Analyze password strength entirely in your browser — length, patterns, common passwords, and hardening tips with a secure generator.',
     },
-    'project-x': {
-      title: 'Project X',
-      desc: 'Hands-on cybersecurity project workspace — build, document, and showcase real-world offensive and defensive security work.',
-      projectX: true,
+    courses: {
+      title: 'Courses Library',
+      desc: 'Browse published PDF learning resources across programming, cybersecurity, networking, and software engineering.',
     },
     'phishing-detector': {
       title: 'Phishing Detector',
-      desc: 'Scan suspicious links and messages for phishing signs — URL analysis, sender checks, and risk scoring to help you avoid scams before you click.',
-    },
-    courses: {
-      title: 'Courses',
-      desc: 'Structured learning paths from beginner to advanced — video lessons, guided modules, and practical exercises across cybersecurity, development, and emerging tech.',
+      desc: 'Inspect suspicious URLs for deceptive patterns — host tricks, shorteners, brand impersonation signals, and risk explanations.',
     },
   },
 };

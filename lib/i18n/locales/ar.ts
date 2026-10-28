@@ -17,9 +17,17 @@ export const ar: Translations = {
     goToMember: (n) => `الانتقال إلى عضو الفريق ${n}`,
     learnAbout: (topic) => `تعرّف على ${topic}`,
     featModalMsg: 'نعمل على تقديم الأفضل لكم',
-    deploying: 'جاري_النشر_V2.0',
-    complete: '٪٦٥ مكتمل',
-    sliderBoxLabel: 'الميزات_القادمة',
+    deploying: 'الوحدات_متاحة',
+    complete: '٪١٠٠ جاهز',
+    sliderBoxLabel: 'الأدوات_الحية',
+    openTool: 'فتح الأداة ←',
+    live: 'مباشر',
+  },
+  toolsNav: {
+    home: 'الرئيسية',
+    passwordChecker: 'فاحص كلمات المرور',
+    phishingDetector: 'كاشف التصيُّد',
+    courses: 'الدورات',
   },
   lang: {
     label: 'اللغة',
@@ -31,6 +39,7 @@ export const ar: Translations = {
     about: 'من نحن',
     team: 'الفريق',
     learn: 'تعلّم',
+    tools: 'الأدوات',
     connect: 'تواصل',
     openMenu: 'فتح القائمة',
     closeMenu: 'إغلاق القائمة',
@@ -39,7 +48,7 @@ export const ar: Translations = {
     logoAlt: 'شعار RojTech',
     joinCommunity: 'انضم إلى مجتمعنا',
     meetTeam: 'تعرّف على الفريق',
-    featuresLabel: 'ميزات جديدة قادمة، ترقّبوا',
+    featuresLabel: 'أدوات الأمن متاحة الآن',
   },
   about: {
     tag: 'حول المنصة',
@@ -202,21 +211,17 @@ export const ar: Translations = {
     viewGithub: 'عرض RojTech على GitHub',
   },
   upcoming: {
-    tag: 'ترقّبوا',
-    titlePrefix: 'ميزات ',
-    titleEm: 'جديدة',
+    tag: 'الأدوات متاحة',
+    titlePrefix: 'وحدات ',
+    titleEm: 'الأمن',
     features: {
       'password-checker': {
         title: 'فاحص كلمات المرور',
         feature: 'فاحص كلمات المرور',
       },
-      'project-x': {
-        title: 'Project X',
-        feature: 'Project X',
-      },
       courses: {
-        title: 'الدورات',
-        feature: 'الدورات',
+        title: 'مكتبة الدورات',
+        feature: 'مكتبة الدورات',
       },
       'phishing-detector': {
         title: 'كاشف التصيُّد',
@@ -230,20 +235,15 @@ export const ar: Translations = {
   features: {
     'password-checker': {
       title: 'فاحص كلمات المرور',
-      desc: 'حلّل فوراً قوة أي كلمة مرور — درجة العشوائية، والكشف عن الاختراق، ونصائح التقوية مدعومة بتحليل في الوقت الفعلي.',
+      desc: 'حلّل قوة كلمة المرور داخل متصفحك فقط — الطول والأنماط والكلمات الشائعة ونصائح التقوية مع مولّد آمن.',
     },
-    'project-x': {
-      title: 'Project X',
-      desc: 'مساحة عمل لمشروع أمن سيبراني عملي — ابنِ ووثّق واعرض أعمال أمن هجومي ودفاعي في العالم الحقيقي.',
-      projectX: true,
+    courses: {
+      title: 'مكتبة الدورات',
+      desc: 'تصفّح موارد التعلّم المنشورة بصيغة PDF في البرمجة والأمن السيبراني والشبكات وهندسة البرمجيات.',
     },
     'phishing-detector': {
       title: 'كاشف التصيُّد',
-      desc: 'افحص الروابط والرسائل المشبوهة بحثاً عن علامات التصيُّد — تحليل الروابط وفحص المرسل وتقييم المخاطر لمساعدتك على تجنّب الاحتيال قبل النقر.',
-    },
-    courses: {
-      title: 'الدورات',
-      desc: 'مسارات تعلّم منظمة من المبتدئ إلى المتقدّم — دروس فيديو ووحدات موجّهة وتمارين عملية في الأمن السيبراني والتطوير والتقنيات الناشئة.',
+      desc: 'افحص الروابط المشبوهة بحثاً عن أنماط الخداع — حيل النطاقات والمختصِرات وانتحال العلامات التجارية مع شرح المخاطر.',
     },
   },
 };

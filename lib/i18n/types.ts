@@ -19,7 +19,6 @@ export type LearnCardContent = {
 export type FeatureContent = {
   title: string;
   desc: string;
-  projectX?: boolean;
 };
 
 export type TeamMemberContent = {
@@ -48,6 +47,14 @@ export type Translations = {
     deploying: string;
     complete: string;
     sliderBoxLabel: string;
+    openTool: string;
+    live: string;
+  };
+  toolsNav: {
+    home: string;
+    passwordChecker: string;
+    phishingDetector: string;
+    courses: string;
   };
   lang: {
     label: string;
@@ -59,6 +66,7 @@ export type Translations = {
     about: string;
     team: string;
     learn: string;
+    tools: string;
     connect: string;
     openMenu: string;
     closeMenu: string;

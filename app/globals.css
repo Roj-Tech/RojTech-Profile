@@ -1391,25 +1391,27 @@
       margin-right: auto;
     }
 
-    .upcoming-feat-card.ufc-below-center {
-      grid-column: 2;
-      grid-row: 2;
-      justify-self: center;
-      width: 100%;
-      max-width: 220px;
+    .upcoming-grid-three {
+      max-width: 860px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .loader-bar-fill-complete {
+      width: 100% !important;
+    }
+
+    @media (max-width: 900px) {
+      .upcoming-grid-three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-width: 520px;
+      }
     }
 
     @media (max-width: 700px) {
-      .upcoming-grid {
+      .upcoming-grid,
+      .upcoming-grid-three {
         grid-template-columns: 1fr;
         max-width: 280px;
-      }
-
-      .upcoming-feat-card.ufc-below-center {
-        grid-column: 1;
-        grid-row: auto;
-        justify-self: stretch;
-        max-width: none;
       }
     }
 
@@ -1445,6 +1447,9 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
       gap: 10px;
       cursor: none;
       transition: border-color 0.3s, background 0.3s, box-shadow 0.3s, transform 0.25s;
@@ -1494,6 +1499,33 @@
       color: #fff;
       letter-spacing: 2px;
       text-transform: uppercase;
+    }
+
+    .ufc-badge-live {
+      color: var(--green) !important;
+      border-color: var(--green) !important;
+      box-shadow: 0 0 12px rgba(0, 255, 136, 0.25);
+    }
+
+    .ufc-open {
+      margin-top: 10px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      opacity: 0.85;
+    }
+
+    .feature-slide-badge-live {
+      text-decoration: none;
+      color: var(--green) !important;
+      border-color: var(--green) !important;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .feature-slide-badge-live:hover {
+      background: rgba(0, 255, 136, 0.1);
+      box-shadow: 0 0 14px rgba(0, 255, 136, 0.25);
     }
 
     .ufc-badge {

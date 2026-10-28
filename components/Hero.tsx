@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { FEATURE_SLIDES_META } from '@/lib/siteData';
 import { useSlider } from '@/hooks/useSlider';
 import { ChevronNext, ChevronPrev, SlideCorners } from '@/components/icons';
@@ -65,17 +66,15 @@ export default function Hero() {
                       <SlideCorners prefix="feature-slide-corner" />
                       <div className="feature-slide-tag">[ {slide.tag} ]</div>
                       <div className="feature-slide-icon">{slide.icon}</div>
-                      <div className="feature-slide-title">
-                        {content.projectX ? (
-                          <>
-                            Project <big><span>X</span></big>
-                          </>
-                        ) : (
-                          content.title
-                        )}
-                      </div>
+                      <div className="feature-slide-title">{content.title}</div>
                       <div className="feature-slide-desc">{content.desc}</div>
-                      <div className="feature-slide-badge">{t.common.comingSoon}</div>
+                      <Link
+                        href={slide.href}
+                        className="feature-slide-badge feature-slide-badge-live"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {t.common.live} · {t.common.openTool}
+                      </Link>
                     </div>
                   );
                 })}

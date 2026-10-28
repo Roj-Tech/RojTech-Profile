@@ -17,27 +17,26 @@ export type FeatureSlideMeta = {
   id: string;
   tag: string;
   icon: string;
+  href: string;
 };
 
 export const FEATURE_SLIDES_META: FeatureSlideMeta[] = [
-  { id: 'password-checker', tag: 'FEATURE_01', icon: '🔐' },
-  { id: 'project-x', tag: 'FEATURE_02', icon: '🛠️' },
-  { id: 'phishing-detector', tag: 'FEATURE_03', icon: '🎣' },
-  { id: 'courses', tag: 'FEATURE_04', icon: '📚' },
+  { id: 'password-checker', tag: 'FEATURE_01', icon: '🔐', href: '/tools/password-checker' },
+  { id: 'courses', tag: 'FEATURE_02', icon: '📚', href: '/courses' },
+  { id: 'phishing-detector', tag: 'FEATURE_03', icon: '🎣', href: '/tools/phishing-detector' },
 ];
 
 export type UpcomingFeatureMeta = {
   id: string;
   tag: string;
   icon: string;
-  className?: string;
+  href: string;
 };
 
 export const UPCOMING_FEATURES_META: UpcomingFeatureMeta[] = [
-  { id: 'password-checker', tag: 'MODULE_01', icon: '🔐' },
-  { id: 'project-x', tag: 'MODULE_02', icon: '🛠️' },
-  { id: 'courses', tag: 'MODULE_03', icon: '📚' },
-  { id: 'phishing-detector', tag: 'MODULE_04', icon: '🎣', className: 'ufc-below-center' },
+  { id: 'password-checker', tag: 'MODULE_01', icon: '🔐', href: '/tools/password-checker' },
+  { id: 'courses', tag: 'MODULE_02', icon: '📚', href: '/courses' },
+  { id: 'phishing-detector', tag: 'MODULE_03', icon: '🎣', href: '/tools/phishing-detector' },
 ];
 
 export type TeamMemberMeta = {
