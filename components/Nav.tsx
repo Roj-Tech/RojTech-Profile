@@ -9,6 +9,7 @@ const NAV_HREFS = [
   { href: '#team', key: 'team' as const },
   { href: '#skills', key: 'learn' as const },
   { href: '#upcoming', key: 'tools' as const },
+  { href: '#courses-home', key: 'courses' as const },
   { href: '#cta', key: 'connect' as const },
 ];
 
