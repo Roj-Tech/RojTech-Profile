@@ -63,13 +63,6 @@ export const TEAM_MEMBERS_META: TeamMemberMeta[] = [
     instagram: 'https://www.instagram.com/balen_khoshnnaw',
   },
   {
-    id: 'mazn',
-    name: 'Balen Mazn Abdulrahman',
-    image: '/mazn.jpeg',
-    instagram: 'https://www.instagram.com/balen.831',
-    linkedin: 'https://www.linkedin.com/in/balen-mezn-a70bb934a',
-  },
-  {
     id: 'bilind',
     name: 'Bilind Farman',
     image: '/Bilind.PNG',

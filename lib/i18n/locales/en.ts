@@ -72,14 +72,8 @@ export const en: Translations = {
         roleLine2: 'CS-Student',
         bio: "Creative mastermind behind the platform's visual identity, specializing in high-end cinematic production and editing.",
       },
-      mazn: {
-        index: '03 / TEAM',
-        role: 'Speaker • Backend Developer',
-        roleLine2: 'SE-Student',
-        bio: 'Charismatic speaker and backend developer building reliable server infrastructure and representing RojTech in the community.',
-      },
       bilind: {
-        index: '04 / TEAM',
+        index: '03 / TEAM',
         role: 'Co-Founder • Speaker',
         roleLine2: 'CS-Student',
         bio: "Charismatic communicator and strategic lead, driving the platform's community engagement and public presence.",
