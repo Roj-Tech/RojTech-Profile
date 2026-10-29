@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import type { CourseCategory, PublicCourse } from '@/lib/courses/types';
 import { useTranslations } from '@/contexts/LocaleContext';
@@ -9,79 +10,40 @@ type ApiResponse = {
   categories: CourseCategory[];
 };
 
-/** iPhone Safari often rejects aborted fetches as TypeError, not AbortError. */
-function isAbortError(err: unknown) {
-  if (!err || typeof err !== 'object') return false;
-  const e = err as { name?: string; message?: string };
-  if (e.name === 'AbortError') return true;
-  const msg = (e.message || '').toLowerCase();
-  return msg.includes('aborted') || msg.includes('abort') || msg.includes('cancelled');
-}
-
-export default function CoursesLibrary({ initialData }: { initialData: ApiResponse }) {
+export default function CoursesLibrary() {
   const t = useTranslations();
   const c = t.courses;
-  const [data, setData] = useState<ApiResponse>(initialData);
+  const [data, setData] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [subject, setSubject] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [sort, setSort] = useState('newest');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [debouncedSubject, setDebouncedSubject] = useState('');
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setDebouncedSearch(search.trim()), 250);
-    return () => window.clearTimeout(timer);
-  }, [search]);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setDebouncedSubject(subject.trim()), 250);
-    return () => window.clearTimeout(timer);
-  }, [subject]);
-
-  useEffect(() => {
-    // First paint already has server data; only refetch when filters change.
-    const isDefault =
-      !debouncedSearch && !category && !debouncedSubject && !difficulty && sort === 'newest';
-    if (isDefault) {
-      setData(initialData);
-      setError(null);
-      return;
-    }
-
     const params = new URLSearchParams();
-    if (debouncedSearch) params.set('search', debouncedSearch);
+    if (search.trim()) params.set('search', search.trim());
     if (category) params.set('category', category);
-    if (debouncedSubject) params.set('subject', debouncedSubject);
+    if (subject.trim()) params.set('subject', subject.trim());
     if (difficulty) params.set('difficulty', difficulty);
     params.set('sort', sort);
 
-    let cancelled = false;
     const controller = new AbortController();
-
     fetch(`/api/courses?${params.toString()}`, { signal: controller.signal })
       .then(async (res) => {
         if (!res.ok) throw new Error('Failed to load courses');
         return res.json() as Promise<ApiResponse>;
       })
       .then((payload) => {
-        if (cancelled) return;
         setData(payload);
         setError(null);
       })
       .catch((err) => {
-        if (cancelled || isAbortError(err) || controller.signal.aborted) return;
-        // Keep last good shelf visible; show a soft error only if empty.
-        setError(c.loadError);
+        if (err.name !== 'AbortError') setError(c.loadError);
       });
-
-    return () => {
-      cancelled = true;
-      controller.abort();
-    };
-  }, [debouncedSearch, category, debouncedSubject, difficulty, sort, initialData, c.loadError]);
+    return () => controller.abort();
+  }, [search, category, subject, difficulty, sort, c.loadError]);
 
   const books = useMemo(() => data?.courses || [], [data]);
 
@@ -107,15 +69,6 @@ export default function CoursesLibrary({ initialData }: { initialData: ApiRespon
       </header>
 
       <section className="tool-panel">
-        <div className="tool-input-row" style={{ marginBottom: 16 }}>
-          <a className="tool-btn tool-btn-primary" href="/book-viewer.html?id=java-kurdish-rojtech">
-            Open Java Kurdish book
-          </a>
-          <a className="tool-btn" href="/java-book">
-            Phone shortcut
-          </a>
-        </div>
-
         <div className="course-filters">
           <input
             className="tool-input"
@@ -166,10 +119,17 @@ export default function CoursesLibrary({ initialData }: { initialData: ApiRespon
           </select>
         </div>
 
-        {error && books.length === 0 && <p className="feedback-toast error">{error}</p>}
+        {error && <p className="feedback-toast error">{error}</p>}
+
+        {!error && !data && (
+          <p className="tool-note">
+            <span className="loading-dot" />
+            {c.loading}
+          </p>
+        )}
 
         <h2 className="bookshelf-heading">Bookshelf</h2>
-        {books.length === 0 ? (
+        {data && books.length === 0 ? (
           <div className="empty-state" style={{ marginTop: 12 }}>
             {c.empty}
           </div>
@@ -209,14 +169,8 @@ function BookCard({
         ? 'book-cover-cyber'
         : 'book-cover-default';
 
-  // Java book opens the image reader directly (reliable on iPhone).
-  const href =
-    course.id === 'java-kurdish-rojtech'
-      ? `/book-viewer.html?id=${encodeURIComponent(course.id)}`
-      : `/courses/${course.id}`;
-
   return (
-    <a href={href} className="book-card">
+    <Link href={`/courses/${course.id}`} className="book-card">
       <div className={`book-cover ${accent}`}>
         <div className="book-spine" />
         <div className="book-cover-inner">
@@ -235,6 +189,6 @@ function BookCard({
         </p>
         <span className="book-card-cta">{readLabel}</span>
       </div>
-    </a>
+    </Link>
   );
 }

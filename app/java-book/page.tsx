@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-/** Short phone-friendly entry: /java-book → image reader */
+/** Old phone shortcut — send people back into the normal book flow. */
 export default function JavaBookRedirectPage() {
-  redirect('/book-viewer.html?id=java-kurdish-rojtech');
+  redirect('/courses/java-kurdish-rojtech');
 }
