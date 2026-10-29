@@ -1,29 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import type { PublicCourse } from '@/lib/courses/types';
 import { useTranslations } from '@/contexts/LocaleContext';
 
-export default function CourseDetails({ id }: { id: string }) {
+export default function CourseDetails({ course }: { course: PublicCourse }) {
   const t = useTranslations();
   const c = t.courses;
-  const [course, setCourse] = useState<PublicCourse | null>(null);
-  const [categoryId, setCategoryId] = useState('');
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch(`/api/courses/${id}`)
-      .then(async (res) => {
-        if (!res.ok) throw new Error('not found');
-        return res.json();
-      })
-      .then((data) => {
-        setCourse(data.course);
-        setCategoryId(data.course.categoryId || '');
-      })
-      .catch(() => setError(c.unavailable));
-  }, [id, c.unavailable]);
 
   function difficultyLabel(value: string) {
     if (value === 'Beginner') return c.beginner;
@@ -32,29 +15,10 @@ export default function CourseDetails({ id }: { id: string }) {
     return value;
   }
 
-  if (error) {
-    return (
-      <div className="tool-panel">
-        <p className="feedback-toast error">{error}</p>
-        <Link href="/courses" className="tool-btn">
-          {c.backLibrary}
-        </Link>
-      </div>
-    );
-  }
-
-  if (!course) {
-    return (
-      <p className="tool-note">
-        <span className="loading-dot" />
-        {c.loadingResource}
-      </p>
-    );
-  }
-
-  const categoryLabel = c.categories[categoryId] || categoryId;
+  const categoryLabel = c.categories[course.categoryId] || course.categoryId;
   const isJavaBook = course.id === 'java-kurdish-rojtech';
   const accent = isJavaBook ? 'book-cover-java' : 'book-cover-default';
+  const phoneReaderHref = `/book-viewer.html?file=${encodeURIComponent(`/api/courses/${course.id}/file`)}`;
 
   return (
     <>
@@ -94,15 +58,12 @@ export default function CourseDetails({ id }: { id: string }) {
             </p>
 
             <div className="tool-input-row" style={{ marginTop: 16 }}>
-              <Link href={`/courses/${course.id}/read`} className="tool-btn tool-btn-primary">
+              <a className="tool-btn tool-btn-primary" href={phoneReaderHref}>
                 {c.readPdf}
-              </Link>
-              <a
-                className="tool-btn"
-                href={`/book-viewer.html?file=${encodeURIComponent(`/api/courses/${course.id}/file`)}`}
-              >
-                Phone reader
               </a>
+              <Link href={`/courses/${course.id}/read`} className="tool-btn">
+                Open in page
+              </Link>
               <Link href="/courses" className="tool-btn">
                 {c.backLibrary}
               </Link>

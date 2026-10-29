@@ -106,7 +106,7 @@
       <canvas id="pageCanvas"></canvas>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="/vendor/pdfjs/pdf.min.js"></script>
     <script>
       (function () {
         var params = new URLSearchParams(location.search);
@@ -127,14 +127,13 @@
         }
 
         if (!window['pdfjsLib']) {
-          statusEl.textContent = 'PDF engine failed to load. Check your connection and refresh.';
+          statusEl.textContent = 'PDF engine failed to load. Refresh the page.';
           statusEl.className = 'error';
           return;
         }
 
         var pdfjsLib = window['pdfjsLib'];
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs/pdf.worker.min.js';
 
         var pdfDoc = null;
         var pageNum = 1;

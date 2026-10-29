@@ -10,40 +10,79 @@ type ApiResponse = {
   categories: CourseCategory[];
 };
 
-export default function CoursesLibrary() {
+/** iPhone Safari often rejects aborted fetches as TypeError, not AbortError. */
+function isAbortError(err: unknown) {
+  if (!err || typeof err !== 'object') return false;
+  const e = err as { name?: string; message?: string };
+  if (e.name === 'AbortError') return true;
+  const msg = (e.message || '').toLowerCase();
+  return msg.includes('aborted') || msg.includes('abort') || msg.includes('cancelled');
+}
+
+export default function CoursesLibrary({ initialData }: { initialData: ApiResponse }) {
   const t = useTranslations();
   const c = t.courses;
-  const [data, setData] = useState<ApiResponse | null>(null);
+  const [data, setData] = useState<ApiResponse>(initialData);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [subject, setSubject] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [sort, setSort] = useState('newest');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [debouncedSubject, setDebouncedSubject] = useState('');
 
   useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedSearch(search.trim()), 250);
+    return () => window.clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedSubject(subject.trim()), 250);
+    return () => window.clearTimeout(timer);
+  }, [subject]);
+
+  useEffect(() => {
+    // First paint already has server data; only refetch when filters change.
+    const isDefault =
+      !debouncedSearch && !category && !debouncedSubject && !difficulty && sort === 'newest';
+    if (isDefault) {
+      setData(initialData);
+      setError(null);
+      return;
+    }
+
     const params = new URLSearchParams();
-    if (search.trim()) params.set('search', search.trim());
+    if (debouncedSearch) params.set('search', debouncedSearch);
     if (category) params.set('category', category);
-    if (subject.trim()) params.set('subject', subject.trim());
+    if (debouncedSubject) params.set('subject', debouncedSubject);
     if (difficulty) params.set('difficulty', difficulty);
     params.set('sort', sort);
 
+    let cancelled = false;
     const controller = new AbortController();
+
     fetch(`/api/courses?${params.toString()}`, { signal: controller.signal })
       .then(async (res) => {
         if (!res.ok) throw new Error('Failed to load courses');
         return res.json() as Promise<ApiResponse>;
       })
       .then((payload) => {
+        if (cancelled) return;
         setData(payload);
         setError(null);
       })
       .catch((err) => {
-        if (err.name !== 'AbortError') setError(c.loadError);
+        if (cancelled || isAbortError(err) || controller.signal.aborted) return;
+        // Keep last good shelf visible; show a soft error only if empty.
+        setError(c.loadError);
       });
-    return () => controller.abort();
-  }, [search, category, subject, difficulty, sort, c.loadError]);
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [debouncedSearch, category, debouncedSubject, difficulty, sort, initialData, c.loadError]);
 
   const books = useMemo(() => data?.courses || [], [data]);
 
@@ -119,17 +158,10 @@ export default function CoursesLibrary() {
           </select>
         </div>
 
-        {error && <p className="feedback-toast error">{error}</p>}
-
-        {!error && !data && (
-          <p className="tool-note">
-            <span className="loading-dot" />
-            {c.loading}
-          </p>
-        )}
+        {error && books.length === 0 && <p className="feedback-toast error">{error}</p>}
 
         <h2 className="bookshelf-heading">Bookshelf</h2>
-        {data && books.length === 0 ? (
+        {books.length === 0 ? (
           <div className="empty-state" style={{ marginTop: 12 }}>
             {c.empty}
           </div>
