@@ -97,6 +97,12 @@ export default function CourseDetails({ id }: { id: string }) {
               <Link href={`/courses/${course.id}/read`} className="tool-btn tool-btn-primary">
                 {c.readPdf}
               </Link>
+              <a
+                className="tool-btn"
+                href={`/book-viewer.html?file=${encodeURIComponent(`/api/courses/${course.id}/file`)}`}
+              >
+                Phone reader
+              </a>
               <Link href="/courses" className="tool-btn">
                 {c.backLibrary}
               </Link>

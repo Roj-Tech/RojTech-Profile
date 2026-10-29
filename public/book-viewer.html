@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>RojTech Book Reader</title>
+    <style>
+      :root {
+        --bg: #020b14;
+        --cyan: #00f5ff;
+        --orange: #ff6b35;
+        --text: #c8d8e8;
+        --dim: #4a6278;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+        height: 100%;
+        overflow: hidden;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 8px;
+        background: rgba(2, 11, 20, 0.96);
+        border-bottom: 1px solid rgba(0, 245, 255, 0.18);
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+      button {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 8px 12px;
+        border: 1px solid var(--cyan);
+        background: rgba(0, 245, 255, 0.08);
+        color: var(--cyan);
+        font-size: 14px;
+        border-radius: 4px;
+        touch-action: manipulation;
+      }
+      button:disabled { opacity: 0.4; }
+      #pageInfo {
+        font-family: ui-monospace, monospace;
+        font-size: 13px;
+        color: var(--cyan);
+        min-width: 72px;
+        text-align: center;
+      }
+      #status {
+        text-align: center;
+        padding: 24px 16px;
+        color: var(--dim);
+      }
+      #status.error { color: var(--orange); }
+      #stage {
+        height: calc(100% - 64px);
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        background: #050b12;
+      }
+      canvas {
+        display: block;
+        max-width: 100%;
+        height: auto !important;
+        background: #fff;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+      }
+      .hint {
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        color: var(--dim);
+        padding: 0 8px 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <button type="button" id="prevBtn">← Prev</button>
+      <span id="pageInfo">…</span>
+      <button type="button" id="nextBtn">Next →</button>
+      <button type="button" id="zoomOutBtn" aria-label="Zoom out">−</button>
+      <button type="button" id="zoomInBtn" aria-label="Zoom in">+</button>
+    </div>
+    <div class="hint">Swipe left/right to change pages · Read only</div>
+    <div id="status">Opening book…</div>
+    <div id="stage" hidden>
+      <canvas id="pageCanvas"></canvas>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+      (function () {
+        var params = new URLSearchParams(location.search);
+        var file = params.get('file');
+        var statusEl = document.getElementById('status');
+        var stageEl = document.getElementById('stage');
+        var canvas = document.getElementById('pageCanvas');
+        var pageInfo = document.getElementById('pageInfo');
+        var prevBtn = document.getElementById('prevBtn');
+        var nextBtn = document.getElementById('nextBtn');
+        var zoomInBtn = document.getElementById('zoomInBtn');
+        var zoomOutBtn = document.getElementById('zoomOutBtn');
+
+        if (!file || !/^\/api\/courses\/[A-Za-z0-9_-]+\/file$/.test(file)) {
+          statusEl.textContent = 'Invalid book link.';
+          statusEl.className = 'error';
+          return;
+        }
+
+        if (!window['pdfjsLib']) {
+          statusEl.textContent = 'PDF engine failed to load. Check your connection and refresh.';
+          statusEl.className = 'error';
+          return;
+        }
+
+        var pdfjsLib = window['pdfjsLib'];
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        var pdfDoc = null;
+        var pageNum = 1;
+        var zoom = 1;
+        var rendering = false;
+        var pending = null;
+        var touchX = null;
+
+        function setStatus(msg, isError) {
+          statusEl.hidden = !msg;
+          statusEl.textContent = msg || '';
+          statusEl.className = isError ? 'error' : '';
+        }
+
+        function updateButtons() {
+          if (!pdfDoc) return;
+          pageInfo.textContent = pageNum + ' / ' + pdfDoc.numPages;
+          prevBtn.disabled = pageNum <= 1;
+          nextBtn.disabled = pageNum >= pdfDoc.numPages;
+        }
+
+        function renderPage(num) {
+          if (rendering) {
+            pending = num;
+            return;
+          }
+          rendering = true;
+          pending = null;
+          pageNum = num;
+          updateButtons();
+
+          pdfDoc.getPage(num).then(function (page) {
+            var stageWidth = Math.max(280, stageEl.clientWidth - 16);
+            var unscaled = page.getViewport({ scale: 1 });
+            var fit = stageWidth / unscaled.width;
+            var viewport = page.getViewport({ scale: fit * zoom });
+            var outputScale = Math.min(window.devicePixelRatio || 1, 2);
+            var ctx = canvas.getContext('2d', { alpha: false });
+
+            canvas.width = Math.floor(viewport.width * outputScale);
+            canvas.height = Math.floor(viewport.height * outputScale);
+            canvas.style.width = Math.floor(viewport.width) + 'px';
+            canvas.style.height = Math.floor(viewport.height) + 'px';
+
+            ctx.setTransform(outputScale, 0, 0, outputScale, 0, 0);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, viewport.width, viewport.height);
+
+            return page.render({
+              canvasContext: ctx,
+              viewport: viewport,
+            }).promise;
+          }).then(function () {
+            rendering = false;
+            if (pending !== null && pending !== pageNum) {
+              var next = pending;
+              pending = null;
+              renderPage(next);
+            }
+          }).catch(function (err) {
+            rendering = false;
+            console.error(err);
+            setStatus('Could not draw this page. Try Next or refresh.', true);
+          });
+        }
+
+        function queueRender(num) {
+          if (!pdfDoc) return;
+          num = Math.max(1, Math.min(pdfDoc.numPages, num));
+          renderPage(num);
+        }
+
+        prevBtn.addEventListener('click', function () { queueRender(pageNum - 1); });
+        nextBtn.addEventListener('click', function () { queueRender(pageNum + 1); });
+        zoomInBtn.addEventListener('click', function () {
+          zoom = Math.min(2.5, Math.round((zoom + 0.15) * 100) / 100);
+          queueRender(pageNum);
+        });
+        zoomOutBtn.addEventListener('click', function () {
+          zoom = Math.max(0.7, Math.round((zoom - 0.15) * 100) / 100);
+          queueRender(pageNum);
+        });
+
+        stageEl.addEventListener('touchstart', function (e) {
+          touchX = e.changedTouches[0] ? e.changedTouches[0].clientX : null;
+        }, { passive: true });
+        stageEl.addEventListener('touchend', function (e) {
+          if (touchX == null || !e.changedTouches[0]) return;
+          var dx = e.changedTouches[0].clientX - touchX;
+          touchX = null;
+          if (Math.abs(dx) < 50) return;
+          if (dx < 0) queueRender(pageNum + 1);
+          else queueRender(pageNum - 1);
+        }, { passive: true });
+
+        document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+        window.addEventListener('resize', function () {
+          if (pdfDoc) queueRender(pageNum);
+        });
+
+        fetch(file, { cache: 'no-store', credentials: 'same-origin' })
+          .then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.arrayBuffer();
+          })
+          .then(function (buf) {
+            return pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
+          })
+          .then(function (doc) {
+            pdfDoc = doc;
+            stageEl.hidden = false;
+            setStatus('');
+            queueRender(1);
+          })
+          .catch(function (err) {
+            console.error(err);
+            setStatus('Could not open this book on your phone. Check your connection and try again.', true);
+          });
+      })();
+    </script>
+  </body>
+</html>
