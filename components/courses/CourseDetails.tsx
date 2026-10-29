@@ -18,7 +18,8 @@ export default function CourseDetails({ course }: { course: PublicCourse }) {
   const categoryLabel = c.categories[course.categoryId] || course.categoryId;
   const isJavaBook = course.id === 'java-kurdish-rojtech';
   const accent = isJavaBook ? 'book-cover-java' : 'book-cover-default';
-  const phoneReaderHref = `/book-viewer.html?file=${encodeURIComponent(`/api/courses/${course.id}/file`)}`;
+  // Image-based reader — works on iPhone (no client PDF.js)
+  const phoneReaderHref = `/book-viewer.html?id=${encodeURIComponent(course.id)}`;
 
   return (
     <>
@@ -54,16 +55,13 @@ export default function CourseDetails({ course }: { course: PublicCourse }) {
             </div>
 
             <p className="tool-note" style={{ marginTop: 14 }}>
-              This book can be read inside RojTech. Download is turned off for everyone.
+              On iPhone, tap <strong>Read PDF</strong> — pages open as images (Prev / Next / swipe).
             </p>
 
             <div className="tool-input-row" style={{ marginTop: 16 }}>
               <a className="tool-btn tool-btn-primary" href={phoneReaderHref}>
                 {c.readPdf}
               </a>
-              <Link href={`/courses/${course.id}/read`} className="tool-btn">
-                Open in page
-              </Link>
               <Link href="/courses" className="tool-btn">
                 {c.backLibrary}
               </Link>

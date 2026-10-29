@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import type { CourseCategory, PublicCourse } from '@/lib/courses/types';
 import { useTranslations } from '@/contexts/LocaleContext';
@@ -108,6 +107,15 @@ export default function CoursesLibrary({ initialData }: { initialData: ApiRespon
       </header>
 
       <section className="tool-panel">
+        <div className="tool-input-row" style={{ marginBottom: 16 }}>
+          <a className="tool-btn tool-btn-primary" href="/book-viewer.html?id=java-kurdish-rojtech">
+            Open Java Kurdish book
+          </a>
+          <a className="tool-btn" href="/java-book">
+            Phone shortcut
+          </a>
+        </div>
+
         <div className="course-filters">
           <input
             className="tool-input"
@@ -201,8 +209,14 @@ function BookCard({
         ? 'book-cover-cyber'
         : 'book-cover-default';
 
+  // Java book opens the image reader directly (reliable on iPhone).
+  const href =
+    course.id === 'java-kurdish-rojtech'
+      ? `/book-viewer.html?id=${encodeURIComponent(course.id)}`
+      : `/courses/${course.id}`;
+
   return (
-    <Link href={`/courses/${course.id}`} className="book-card">
+    <a href={href} className="book-card">
       <div className={`book-cover ${accent}`}>
         <div className="book-spine" />
         <div className="book-cover-inner">
@@ -221,6 +235,6 @@ function BookCard({
         </p>
         <span className="book-card-cta">{readLabel}</span>
       </div>
-    </Link>
+    </a>
   );
 }

@@ -1,26 +1,15 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import PdfReader from '@/components/courses/PdfReader';
+import { redirect } from 'next/navigation';
 import { getCourse } from '@/lib/courses/store';
+import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
 type Props = { params: Promise<{ id: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const course = getCourse(id);
-  return {
-    title: course ? `Read ${course.title} — RojTech` : 'Read PDF — RojTech',
-  };
-}
-
+/** Send every device straight to the image-based phone reader. */
 export default async function CourseReadPage({ params }: Props) {
   const { id } = await params;
   const course = getCourse(id);
-  if (!course || !course.published) {
-    notFound();
-  }
-
-  return <PdfReader id={id} title={course.title} />;
+  if (!course || !course.published) notFound();
+  redirect(`/book-viewer.html?id=${encodeURIComponent(id)}`);
 }

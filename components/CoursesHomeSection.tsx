@@ -47,6 +47,11 @@ export default function CoursesHomeSection() {
               <span className="ufc-open">{content.openLibrary}</span>
             </Link>
           </div>
+          <p className="learn-hint" style={{ marginTop: 18 }}>
+            <a className="ufc-open" href="/book-viewer.html?id=java-kurdish-rojtech">
+              Open Java Kurdish book (phone reader) →
+            </a>
+          </p>
         </div>
       </div>
     </section>
