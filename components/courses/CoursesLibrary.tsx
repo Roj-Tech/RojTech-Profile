@@ -45,7 +45,7 @@ export default function CoursesLibrary() {
     return () => controller.abort();
   }, [search, category, subject, difficulty, sort, c.loadError]);
 
-  const recent = useMemo(() => (data?.courses || []).slice(0, 3), [data]);
+  const books = useMemo(() => data?.courses || [], [data]);
 
   function categoryName(id: string) {
     return c.categories[id] || data?.categories.find((cat) => cat.id === id)?.name || id;
@@ -128,35 +128,20 @@ export default function CoursesLibrary() {
           </p>
         )}
 
-        {data && recent.length > 0 && !search && !category && !subject && !difficulty && (
-          <div style={{ marginBottom: 22 }}>
-            <h2>{c.recentlyAdded}</h2>
-            <div className="courses-grid" style={{ marginTop: 12 }}>
-              {recent.map((course) => (
-                <CourseCard
-                  key={`recent-${course.id}`}
-                  course={course}
-                  categoryLabel={categoryName(course.categoryId)}
-                  difficultyLabel={difficultyLabel(course.difficulty)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        <h2>{c.allResources}</h2>
-        {data && data.courses.length === 0 ? (
+        <h2 className="bookshelf-heading">Bookshelf</h2>
+        {data && books.length === 0 ? (
           <div className="empty-state" style={{ marginTop: 12 }}>
             {c.empty}
           </div>
         ) : (
-          <div className="courses-grid" style={{ marginTop: 12 }}>
-            {(data?.courses || []).map((course) => (
-              <CourseCard
+          <div className="bookshelf" style={{ marginTop: 16 }}>
+            {books.map((course) => (
+              <BookCard
                 key={course.id}
                 course={course}
                 categoryLabel={categoryName(course.categoryId)}
                 difficultyLabel={difficultyLabel(course.difficulty)}
+                readLabel={c.readPdf}
               />
             ))}
           </div>
@@ -166,26 +151,44 @@ export default function CoursesLibrary() {
   );
 }
 
-function CourseCard({
+function BookCard({
   course,
   categoryLabel,
   difficultyLabel,
+  readLabel,
 }: {
   course: PublicCourse;
   categoryLabel: string;
   difficultyLabel: string;
+  readLabel: string;
 }) {
+  const accent =
+    course.id === 'java-kurdish-rojtech'
+      ? 'book-cover-java'
+      : course.categoryId === 'cybersecurity'
+        ? 'book-cover-cyber'
+        : 'book-cover-default';
+
   return (
-    <Link href={`/courses/${course.id}`} className="course-card">
-      <div className="course-meta">
-        {categoryLabel} · {difficultyLabel}
+    <Link href={`/courses/${course.id}`} className="book-card">
+      <div className={`book-cover ${accent}`}>
+        <div className="book-spine" />
+        <div className="book-cover-inner">
+          <span className="book-cover-badge">READ ONLY</span>
+          <h3 className="book-cover-title">{course.title}</h3>
+          <p className="book-cover-author">{course.author || 'RojTech'}</p>
+        </div>
       </div>
-      <h3>{course.title}</h3>
-      <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', flex: 1 }}>
-        {course.description.slice(0, 120)}
-        {course.description.length > 120 ? '…' : ''}
-      </p>
-      <div className="course-meta">{course.subject}</div>
+      <div className="book-card-meta">
+        <div className="course-meta">
+          {categoryLabel} · {difficultyLabel}
+        </div>
+        <p className="book-card-desc">
+          {course.description.slice(0, 110)}
+          {course.description.length > 110 ? '…' : ''}
+        </p>
+        <span className="book-card-cta">{readLabel}</span>
+      </div>
     </Link>
   );
 }

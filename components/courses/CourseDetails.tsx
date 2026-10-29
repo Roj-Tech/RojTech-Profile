@@ -53,6 +53,8 @@ export default function CourseDetails({ id }: { id: string }) {
   }
 
   const categoryLabel = c.categories[categoryId] || categoryId;
+  const isJavaBook = course.id === 'java-kurdish-rojtech';
+  const accent = isJavaBook ? 'book-cover-java' : 'book-cover-default';
 
   return (
     <>
@@ -62,36 +64,44 @@ export default function CourseDetails({ id }: { id: string }) {
         <p className="tool-lead">{course.description}</p>
       </header>
 
-      <section className="tool-panel">
-        <div className="tool-checks">
-          <div className="tool-check ok">{categoryLabel}</div>
-          <div className="tool-check ok">{difficultyLabel(course.difficulty)}</div>
-          <div className="tool-check ok">{course.subject}</div>
-          {course.author ? (
-            <div className="tool-check ok">
-              {c.author} {course.author}
+      <section className="tool-panel book-details-panel">
+        <div className="book-details-layout">
+          <div className={`book-cover book-cover-lg ${accent}`}>
+            <div className="book-spine" />
+            <div className="book-cover-inner">
+              <span className="book-cover-badge">READ ONLY</span>
+              <h3 className="book-cover-title">{course.title}</h3>
+              <p className="book-cover-author">{course.author || 'RojTech'}</p>
+              {isJavaBook && <p className="book-cover-lang">کوردی · Java</p>}
             </div>
-          ) : null}
-          <div className="tool-check ok">
-            {c.added} {new Date(course.createdAt).toLocaleDateString()}
           </div>
-        </div>
-        <div className="tool-input-row" style={{ marginTop: 16 }}>
-          <Link href={`/courses/${course.id}/read`} className="tool-btn tool-btn-primary">
-            {c.readPdf}
-          </Link>
-          {course.allowDownload && (
-            <a
-              className="tool-btn"
-              href={`/api/courses/${course.id}/file?download=1`}
-              rel="noopener"
-            >
-              {c.downloadPdf}
-            </a>
-          )}
-          <Link href="/courses" className="tool-btn">
-            {c.backLibrary}
-          </Link>
+
+          <div className="book-details-copy">
+            <div className="tool-checks">
+              <div className="tool-check ok">{categoryLabel}</div>
+              <div className="tool-check ok">{difficultyLabel(course.difficulty)}</div>
+              <div className="tool-check ok">{course.subject}</div>
+              {course.author ? (
+                <div className="tool-check ok">
+                  {c.author} {course.author}
+                </div>
+              ) : null}
+              <div className="tool-check ok">Online reading only</div>
+            </div>
+
+            <p className="tool-note" style={{ marginTop: 14 }}>
+              This book can be read inside RojTech. Download is turned off for everyone.
+            </p>
+
+            <div className="tool-input-row" style={{ marginTop: 16 }}>
+              <Link href={`/courses/${course.id}/read`} className="tool-btn tool-btn-primary">
+                {c.readPdf}
+              </Link>
+              <Link href="/courses" className="tool-btn">
+                {c.backLibrary}
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </>

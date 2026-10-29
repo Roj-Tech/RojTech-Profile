@@ -8,10 +8,37 @@ function emptyDb(): CoursesDatabase {
   return { categories: [...DEFAULT_CATEGORIES], courses: [] };
 }
 
+const SEEDED_JAVA_BOOK: CourseResource = {
+  id: 'java-kurdish-rojtech',
+  title: 'Java Kurdish Book - Team RojTech',
+  description:
+    'A Kurdish-language Java teaching book by Team RojTech. Read online only. Downloads are disabled.',
+  categoryId: 'java',
+  subject: 'Java / Kurdish',
+  difficulty: 'Beginner',
+  author: 'Team RojTech',
+  pdfFile: 'java-kurdish-rojtech.pdf',
+  pdfOriginalName: 'Java_Kurdish_Book_Team_Rojtech.pdf',
+  published: true,
+  allowDownload: false,
+  createdAt: '2026-04-29T00:00:00.000Z',
+  updatedAt: '2026-04-29T00:00:00.000Z',
+  createdBy: 'system',
+};
+
+function ensureSeededBooks(db: CoursesDatabase) {
+  if (!db.courses.some((c) => c.id === SEEDED_JAVA_BOOK.id)) {
+    // Prefer published seed at the front of the shelf
+    db.courses.unshift({ ...SEEDED_JAVA_BOOK });
+    writeDb(db);
+  }
+}
+
 export function readDb(): CoursesDatabase {
   ensureDataDirs();
   if (!existsSync(COURSES_DB_PATH)) {
     const db = emptyDb();
+    db.courses.push({ ...SEEDED_JAVA_BOOK });
     writeDb(db);
     return db;
   }
@@ -20,9 +47,12 @@ export function readDb(): CoursesDatabase {
     const parsed = JSON.parse(raw) as CoursesDatabase;
     if (!parsed.categories?.length) parsed.categories = [...DEFAULT_CATEGORIES];
     if (!Array.isArray(parsed.courses)) parsed.courses = [];
+    ensureSeededBooks(parsed);
     return parsed;
   } catch {
-    return emptyDb();
+    const db = emptyDb();
+    db.courses.push({ ...SEEDED_JAVA_BOOK });
+    return db;
   }
 }
 

@@ -18,8 +18,15 @@ export async function GET(request: Request, ctx: Ctx) {
 
   const { searchParams } = new URL(request.url);
   const wantDownload = searchParams.get('download') === '1';
-  if (wantDownload && !course.allowDownload && !session) {
-    return NextResponse.json({ error: 'Downloads disabled for this resource' }, { status: 403 });
+
+  // Public download is never allowed when the course disables it
+  if (wantDownload) {
+    if (!course.allowDownload) {
+      return NextResponse.json(
+        { error: 'Downloads are disabled for this book. Read online only.' },
+        { status: 403 },
+      );
+    }
   }
 
   const filePath = safeUploadPath(course.pdfFile);
@@ -28,9 +35,10 @@ export async function GET(request: Request, ctx: Ctx) {
   }
 
   const buf = readFileSync(filePath);
-  const disposition = wantDownload
+  const canAttach = wantDownload && course.allowDownload;
+  const disposition = canAttach
     ? `attachment; filename="${course.pdfOriginalName.replace(/"/g, '')}"`
-    : `inline; filename="${course.pdfOriginalName.replace(/"/g, '')}"`;
+    : 'inline';
 
   return new NextResponse(buf, {
     status: 200,
@@ -38,8 +46,12 @@ export async function GET(request: Request, ctx: Ctx) {
       'Content-Type': 'application/pdf',
       'Content-Length': String(buf.length),
       'Content-Disposition': disposition,
-      'Cache-Control': 'private, no-store',
+      'Cache-Control': 'private, no-store, no-cache, must-revalidate',
+      Pragma: 'no-cache',
       'X-Content-Type-Options': 'nosniff',
+      // Discourage embedding / casual saving outside the reader
+      'X-Frame-Options': 'SAMEORIGIN',
+      'Content-Security-Policy': "frame-ancestors 'self'",
     },
   });
 }
