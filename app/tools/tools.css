@@ -595,10 +595,18 @@ body.locale-ar .tools-shell .tool-kicker {
   }
 }
 
-/* Protected book reader */
+/* Protected book reader — mobile-first */
 .book-reader {
   user-select: none;
   -webkit-user-select: none;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.book-reader-hero h1 {
+  font-size: clamp(1.35rem, 5vw, 2.4rem);
+  word-break: break-word;
 }
 
 .book-reader-notice {
@@ -608,6 +616,19 @@ body.locale-ar .tools-shell .tool-kicker {
 .book-reader-toolbar {
   margin-bottom: 14px;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  position: sticky;
+  top: 58px;
+  z-index: 20;
+  padding: 8px 0;
+  background: linear-gradient(180deg, rgba(2, 11, 20, 0.96), rgba(2, 11, 20, 0.88));
+}
+
+.book-nav-btn {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
 }
 
 .book-page-indicator {
@@ -624,41 +645,73 @@ body.locale-ar .tools-shell .tool-kicker {
   background:
     radial-gradient(ellipse at center, rgba(0, 245, 255, 0.05), transparent 55%),
     #050b12;
-  min-height: 70vh;
+  min-height: 60vh;
+  width: 100%;
+  max-width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   overflow: auto;
-  padding: 20px;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px;
+  touch-action: pan-y;
 }
 
-.book-stage-shield {
+.book-stage-status {
   position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: transparent;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  width: min(90%, 420px);
+  text-align: center;
 }
 
 .book-canvas {
   position: relative;
   z-index: 1;
+  display: block;
   max-width: 100%;
+  width: auto;
   height: auto;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
   background: #fff;
 }
 
 .book-watermark {
-  position: absolute;
-  right: 18px;
-  bottom: 14px;
+  position: sticky;
+  align-self: flex-end;
+  margin-top: -28px;
+  margin-right: 8px;
   z-index: 3;
   font-family: 'Share Tech Mono', monospace;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   letter-spacing: 2px;
   color: rgba(0, 245, 255, 0.55);
   pointer-events: none;
+}
+
+.book-mobile-hint {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+
+@media (max-width: 700px) {
+  .book-reader-toolbar {
+    top: 0;
+  }
+
+  .book-stage {
+    min-height: 68vh;
+    padding: 8px;
+  }
+
+  .tools-main {
+    width: min(100%, calc(100% - 16px));
+    padding-top: 18px;
+  }
 }
 
 @media print {
