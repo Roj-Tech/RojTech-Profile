@@ -6,6 +6,10 @@ import { getCourse } from '@/lib/courses/store';
 
 type Ctx = { params: Promise<{ id: string }> };
 
+/**
+ * Raw PDF bytes — never for public readers when allowDownload is false.
+ * The on-site reader uses rendered pages, not this file URL.
+ */
 export async function GET(request: Request, ctx: Ctx) {
   const { id } = await ctx.params;
   const course = getCourse(id);
@@ -19,14 +23,21 @@ export async function GET(request: Request, ctx: Ctx) {
   const { searchParams } = new URL(request.url);
   const wantDownload = searchParams.get('download') === '1';
 
-  // Public download is never allowed when the course disables it
-  if (wantDownload) {
-    if (!course.allowDownload) {
-      return NextResponse.json(
-        { error: 'Downloads are disabled for this book. Read online only.' },
-        { status: 403 },
-      );
-    }
+  // Public users cannot fetch or download the PDF when downloads are off
+  if (!course.allowDownload && !session) {
+    return NextResponse.json(
+      {
+        error: 'Downloads are disabled. Open the book with Read PDF on RojTech to read online only.',
+      },
+      { status: 403 },
+    );
+  }
+
+  if (wantDownload && !course.allowDownload) {
+    return NextResponse.json(
+      { error: 'Downloads are disabled for this book. Read online only.' },
+      { status: 403 },
+    );
   }
 
   const filePath = safeUploadPath(course.pdfFile);
@@ -35,7 +46,7 @@ export async function GET(request: Request, ctx: Ctx) {
   }
 
   const buf = readFileSync(filePath);
-  const canAttach = wantDownload && course.allowDownload;
+  const canAttach = wantDownload && course.allowDownload && Boolean(session);
   const disposition = canAttach
     ? `attachment; filename="${course.pdfOriginalName.replace(/"/g, '')}"`
     : 'inline';
@@ -46,12 +57,10 @@ export async function GET(request: Request, ctx: Ctx) {
       'Content-Type': 'application/pdf',
       'Content-Length': String(buf.length),
       'Content-Disposition': disposition,
-      'Cache-Control': 'private, no-store, no-cache, must-revalidate',
-      Pragma: 'no-cache',
+      'Cache-Control': 'private, no-store',
       'X-Content-Type-Options': 'nosniff',
-      // Discourage embedding / casual saving outside the reader
-      'X-Frame-Options': 'SAMEORIGIN',
-      'Content-Security-Policy': "frame-ancestors 'self'",
+      'Content-Security-Policy': "frame-ancestors 'none'",
+      'X-Robots-Tag': 'noindex, nofollow',
     },
   });
 }

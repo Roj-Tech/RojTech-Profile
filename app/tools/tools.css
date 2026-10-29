@@ -599,9 +599,23 @@ body.locale-ar .tools-shell .tool-kicker {
 .book-reader {
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+}
+
+.book-reader-blurred .book-stage {
+  filter: blur(14px);
+  transition: filter 0.15s ease;
+}
+
+.book-stage-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  /* Blocks drag-save / some capture overlays without blocking scroll */
+  pointer-events: none;
 }
 
 .book-reader-hero h1 {
@@ -701,18 +715,18 @@ body.locale-ar .tools-shell .tool-kicker {
 .book-iframe-shell {
   width: 100%;
   border: 1px solid rgba(0, 245, 255, 0.2);
-  background: #050b12;
-  min-height: 72vh;
+  background: #0b1220;
+  min-height: 78vh;
   overflow: hidden;
 }
 
 .book-iframe {
   display: block;
   width: 100%;
-  height: 72vh;
-  min-height: 520px;
+  height: 78vh;
+  min-height: 640px;
   border: 0;
-  background: #020b14;
+  background: #0b1220;
 }
 
 @media (max-width: 700px) {

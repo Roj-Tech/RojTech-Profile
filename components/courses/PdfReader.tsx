@@ -1,60 +1,47 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from '@/contexts/LocaleContext';
 
-export default function PdfReader({ id }: { id: string }) {
+type PageMeta = { title?: string; pages: number };
+
+/**
+ * Read-only book viewer — no PDF file is exposed, so visitors cannot download it.
+ * Pages are shown in the classic Prev / Next / zoom reader.
+ */
+export default function PdfReader({ id, title }: { id: string; title: string }) {
   const t = useTranslations();
   const c = t.courses;
-  const [title, setTitle] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [scale, setScale] = useState(1);
+  const [blurred, setBlurred] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      setLoading(true);
-      try {
-        const [metaRes, courseRes] = await Promise.all([
-          fetch(`/book-pages/${encodeURIComponent(id)}/meta.json`, { cache: 'no-store' }),
-          fetch(`/api/courses/${id}`),
-        ]);
-
-        if (courseRes.ok) {
-          const courseData = await courseRes.json();
-          if (!cancelled) setTitle(courseData.course?.title || '');
-        }
-
-        if (metaRes.ok) {
-          const meta = await metaRes.json();
-          if (!cancelled) {
-            setTotal(meta.pages || 0);
-            setTitle((prev) => prev || meta.title || '');
-            setPage(1);
-          }
-        } else {
-          // Fallback: classic PDF file path if images are missing
-          const fileRes = await fetch(`/api/courses/${id}/file`, { method: 'HEAD' });
-          if (!fileRes.ok) throw new Error('missing');
-          if (!cancelled) setError(c.readerError);
-          return;
-        }
-      } catch {
-        if (!cancelled) setError(c.readerError);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    void load();
+    let alive = true;
+    setLoading(true);
+    fetch(`/book-pages/${encodeURIComponent(id)}/meta.json`, { cache: 'no-store' })
+      .then(async (res) => {
+        if (!res.ok) throw new Error('missing');
+        return res.json() as Promise<PageMeta>;
+      })
+      .then((meta) => {
+        if (!alive) return;
+        setTotal(meta.pages || 0);
+        setPage(1);
+      })
+      .catch(() => {
+        if (alive) setError(c.readerError);
+      })
+      .finally(() => {
+        if (alive) setLoading(false);
+      });
     return () => {
-      cancelled = true;
+      alive = false;
     };
   }, [id, c.readerError]);
 
@@ -62,17 +49,37 @@ export default function PdfReader({ id }: { id: string }) {
     const onContext = (e: Event) => e.preventDefault();
     const onKey = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
-      if ((e.ctrlKey || e.metaKey) && (key === 's' || key === 'p')) e.preventDefault();
-      if (key === 'printscreen') e.preventDefault();
+      // Block save / print / “save as”
+      if ((e.ctrlKey || e.metaKey) && (key === 's' || key === 'p' || key === 'u')) {
+        e.preventDefault();
+      }
+      if (key === 'printscreen') {
+        e.preventDefault();
+        setBlurred(true);
+        window.setTimeout(() => setBlurred(false), 1500);
+      }
     };
+    const onVis = () => {
+      // Soft deterrent when tab is captured / switched during reading
+      if (document.hidden) setBlurred(true);
+      else window.setTimeout(() => setBlurred(false), 400);
+    };
+
     const node = wrapRef.current;
     node?.addEventListener('contextmenu', onContext);
     window.addEventListener('keydown', onKey);
+    document.addEventListener('visibilitychange', onVis);
     return () => {
       node?.removeEventListener('contextmenu', onContext);
       window.removeEventListener('keydown', onKey);
+      document.removeEventListener('visibilitychange', onVis);
     };
   }, []);
+
+  const pageSrc = `/book-pages/${encodeURIComponent(id)}/p-${page}.jpg`;
+
+  const goPrev = useCallback(() => setPage((p) => Math.max(1, p - 1)), []);
+  const goNext = useCallback(() => setPage((p) => Math.min(total, p + 1)), [total]);
 
   if (error) {
     return (
@@ -85,15 +92,13 @@ export default function PdfReader({ id }: { id: string }) {
     );
   }
 
-  const pageSrc = `/book-pages/${encodeURIComponent(id)}/p-${page}.jpg`;
-
   return (
-    <div className="book-reader" ref={wrapRef}>
+    <div className={`book-reader${blurred ? ' book-reader-blurred' : ''}`} ref={wrapRef}>
       <header className="tool-hero">
         <div className="tool-kicker">{c.readerKicker}</div>
-        <h1>{title || '…'}</h1>
+        <h1>{title}</h1>
         <p className="tool-lead book-reader-notice">
-          Read-only viewer · Download is disabled · Content is for online reading on RojTech only.
+          Read-only · PDF download disabled · Online reading on RojTech only
         </p>
       </header>
 
@@ -104,12 +109,7 @@ export default function PdfReader({ id }: { id: string }) {
         <Link href="/courses" className="tool-btn">
           {c.backLibrary}
         </Link>
-        <button
-          type="button"
-          className="tool-btn"
-          disabled={page <= 1 || loading}
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-        >
+        <button type="button" className="tool-btn" disabled={page <= 1 || loading} onClick={goPrev}>
           ← Prev
         </button>
         <span className="book-page-indicator">{total ? `${page} / ${total}` : '…'}</span>
@@ -117,7 +117,7 @@ export default function PdfReader({ id }: { id: string }) {
           type="button"
           className="tool-btn"
           disabled={!total || page >= total || loading}
-          onClick={() => setPage((p) => Math.min(total, p + 1))}
+          onClick={goNext}
         >
           Next →
         </button>
@@ -149,9 +149,10 @@ export default function PdfReader({ id }: { id: string }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={pageSrc}
-            alt={`Page ${page}`}
+            alt=""
             className="book-canvas"
             draggable={false}
+            onDragStart={(e) => e.preventDefault()}
             style={{
               width: `${scale * 100}%`,
               maxWidth: 'none',
@@ -159,6 +160,7 @@ export default function PdfReader({ id }: { id: string }) {
               display: 'block',
               margin: '0 auto',
               background: '#fff',
+              pointerEvents: 'none',
             }}
             onLoad={() => {
               if (page < total) {
@@ -169,14 +171,14 @@ export default function PdfReader({ id }: { id: string }) {
           />
         )}
         <div className="book-watermark" aria-hidden>
-          RojTech · Read only
+          RojTech · Read only · No download
         </div>
       </div>
 
       <p className="tool-note">
-        Screenshots and screen recording cannot be fully blocked by any website. This book is
-        served without a download button and without the browser PDF toolbar so casual saving is
-        harder — please respect Team RojTech’s read-only access.
+        The PDF file cannot be downloaded. Reading is online-only inside RojTech. Screenshots and
+        screen recording cannot be fully blocked by any website — please respect Team RojTech’s
+        read-only access.
       </p>
     </div>
   );
