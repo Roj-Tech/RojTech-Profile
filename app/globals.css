@@ -2469,6 +2469,16 @@
   margin-top: 28px;
 }
 
+.more-card {
+  gap: 12px;
+  padding-top: 32px;
+  padding-bottom: 26px;
+}
+
+.more-card .ufc-title {
+  margin-top: 4px;
+}
+
 .nav-links a.active {
   color: var(--cyan);
 }
