@@ -71,8 +71,8 @@ export const ar: Translations = {
   },
   team: {
     tag: 'الفريق',
-    titlePrefix: 'العقول وراء ',
-    titleEm: 'RojTech',
+    titlePrefix: 'فريقنا',
+    titleEm: '',
     members: {
       mustafa: {
         index: '01 / الفريق',

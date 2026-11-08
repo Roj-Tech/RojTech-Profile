@@ -71,8 +71,8 @@ export const ku: Translations = {
   },
   team: {
     tag: 'تیم',
-    titlePrefix: 'ئەو مێشکانەی لە پشت ',
-    titleEm: 'RojTech',
+    titlePrefix: 'تیمی ',
+    titleEm: 'ئێمە',
     members: {
       mustafa: {
         index: '٠١ / تیم',

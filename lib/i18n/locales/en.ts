@@ -70,9 +70,9 @@ export const en: Translations = {
     ],
   },
   team: {
-    tag: 'The Team',
-    titlePrefix: 'The Minds Behind ',
-    titleEm: 'RojTech',
+    tag: 'Team',
+    titlePrefix: 'Our ',
+    titleEm: 'Team',
     members: {
       mustafa: {
         index: '01 / TEAM',
