@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Providers from '@/components/Providers';
 import './globals.css';
 import './overrides.css';
 import './rtl.css';
@@ -20,7 +21,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

@@ -1,5 +1,10 @@
-import SitePage from '@/components/SitePage';
+import AppShell from '@/components/AppShell';
+import Hero from '@/components/Hero';
 
 export default function Home() {
-  return <SitePage />;
+  return (
+    <AppShell showFooter={false}>
+      <Hero />
+    </AppShell>
+  );
 }

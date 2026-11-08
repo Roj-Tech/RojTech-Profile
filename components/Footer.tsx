@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useTranslations } from '@/contexts/LocaleContext';
 
 export default function Footer() {
@@ -7,9 +8,9 @@ export default function Footer() {
 
   return (
     <footer>
-      <a href="#" className="footer-logo">
+      <Link href="/" className="footer-logo">
         Roj<span style={{ color: 'var(--green)' }}>Tech</span>
-      </a>
+      </Link>
       <div className="footer-copy">{t.footer.copy}</div>
     </footer>
   );

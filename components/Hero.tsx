@@ -17,7 +17,7 @@ export default function Hero() {
     total: FEATURE_SLIDES_META.length,
     autoInterval: 2500,
     onBoxClick: () => {
-      document.getElementById('upcoming')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.location.assign('/tools');
     },
     dotClass: 'dot',
   });
@@ -35,15 +35,22 @@ export default function Hero() {
       <div className="hero-content">
         <div className="hero-logo-wrap reveal">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/LOGO44.png" alt={t.hero.logoAlt} className="hero-logo-img" />
+          <img
+            src="/LOGO44.png"
+            alt={t.hero.logoAlt}
+            className="hero-logo-img"
+            width={520}
+            height={445}
+            decoding="async"
+          />
         </div>
         <div className="hero-cta reveal reveal-delay-1">
-          <a href="#cta" className="btn-primary">
+          <Link href="/connect" className="btn-primary">
             {t.hero.joinCommunity}
-          </a>
-          <a href="#team" className="btn-secondary">
+          </Link>
+          <Link href="/team" className="btn-secondary">
             {t.hero.meetTeam}
-          </a>
+          </Link>
         </div>
       </div>
 

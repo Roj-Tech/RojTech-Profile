@@ -67,12 +67,14 @@ export type Translations = {
     ar: string;
   };
   nav: {
+    home: string;
     about: string;
     team: string;
     learn: string;
     tools: string;
     courses: string;
     connect: string;
+    more: string;
     openMenu: string;
     closeMenu: string;
   };

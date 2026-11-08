@@ -93,7 +93,8 @@ p.learn-hint {
 @media (min-width: 900px) {
   #hero {
     display: grid !important;
-    grid-template-columns: 1fr min(680px, 48vw);
+    /* minmax(0,1fr) stops long KU/AR button text from widening the logo column */
+    grid-template-columns: minmax(0, 1fr) min(680px, 48vw);
     gap: 3vw;
     align-items: center;
   }
@@ -101,7 +102,9 @@ p.learn-hint {
   .hero-content {
     grid-column: 1;
     grid-row: 1;
-    max-width: none;
+    max-width: 560px;
+    width: 100%;
+    min-width: 0;
     justify-self: start;
     align-self: center;
     z-index: 4;
@@ -118,18 +121,6 @@ p.learn-hint {
   .features-slider-wrap {
     width: 100%;
     max-width: min(680px, 48vw);
-  }
-
-  .hero-logo-img {
-    width: min(1080px, 72vw);
-    margin-left: -120px;
-    margin-right: auto;
-  }
-}
-
-@media (min-width: 1200px) {
-  .hero-logo-img {
-    margin-left: -200px;
   }
 }
 

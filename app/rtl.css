@@ -103,7 +103,7 @@ body.locale-en .feat-modal-icon {
 @media (min-width: 900px) {
   [dir='rtl'] #hero {
     direction: ltr;
-    grid-template-columns: 1fr min(680px, 48vw) !important;
+    grid-template-columns: minmax(0, 1fr) min(680px, 48vw) !important;
   }
 
   [dir='rtl'] .hero-content {
@@ -112,7 +112,9 @@ body.locale-en .feat-modal-icon {
     justify-self: start !important;
     align-self: center;
     text-align: left;
-    max-width: none;
+    max-width: 560px !important;
+    width: 100%;
+    min-width: 0;
   }
 
   [dir='rtl'] .hero-visual {
@@ -130,10 +132,9 @@ body.locale-en .feat-modal-icon {
     overflow: visible;
   }
 
+  /* Logo size is locked in globals.css — only keep alignment here */
   [dir='rtl'] .hero-logo-img {
-    width: min(1080px, 72vw) !important;
-    max-width: none;
-    margin-inline-start: -120px !important;
+    margin-inline-start: -40px !important;
     margin-inline-end: auto !important;
   }
 
@@ -174,7 +175,7 @@ body.locale-en .feat-modal-icon {
 
 @media (min-width: 1200px) {
   [dir='rtl'] .hero-logo-img {
-    margin-inline-start: -200px !important;
+    margin-inline-start: -60px !important;
     margin-inline-end: auto !important;
   }
 }
@@ -459,7 +460,6 @@ body.locale-en .feat-modal-icon {
   }
 
   [dir='rtl'] .hero-logo-img {
-    width: min(400px, 94vw) !important;
     margin-inline: auto !important;
   }
 
