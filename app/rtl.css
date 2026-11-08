@@ -2,6 +2,35 @@
    English layout metrics are the visual source of truth.
    Language fonts may change for text, but must not resize icons/controls. */
 
+/* Bottom phone tabs must stay a normal horizontal bar in every language */
+[dir='rtl'] .bottom-nav,
+body.locale-ku .bottom-nav,
+body.locale-ar .bottom-nav {
+  direction: ltr !important;
+  writing-mode: horizontal-tb !important;
+  flex-direction: row !important;
+  top: auto !important;
+  bottom: 0 !important;
+  height: auto !important;
+  transform: none !important;
+}
+
+[dir='rtl'] .bottom-nav-item,
+body.locale-ku .bottom-nav-item,
+body.locale-ar .bottom-nav-item {
+  flex-direction: column !important;
+  writing-mode: horizontal-tb !important;
+  transform: none !important;
+}
+
+[dir='rtl'] .bottom-nav-label,
+body.locale-ku .bottom-nav-label,
+body.locale-ar .bottom-nav-label {
+  writing-mode: horizontal-tb !important;
+  transform: none !important;
+  text-orientation: mixed !important;
+}
+
 [dir='rtl'] {
   --font-body: sans-serif;
 }

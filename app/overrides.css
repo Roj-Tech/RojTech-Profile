@@ -1,6 +1,6 @@
 /* Next.js layout additions: nav, hero grid, language switcher */
 
-nav {
+nav.site-nav {
   direction: ltr;
 }
 

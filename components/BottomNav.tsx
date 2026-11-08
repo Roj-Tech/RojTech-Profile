@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { CSSProperties } from 'react';
 import { useTranslations } from '@/contexts/LocaleContext';
 
 const TABS = [
@@ -37,14 +38,81 @@ const TABS = [
   },
 ];
 
-function TabIcon({ name, active }: { name: string; active: boolean }) {
-  const stroke = active ? 'currentColor' : 'currentColor';
+/** Inline lock so top-nav / RTL CSS can never rotate this into a side strip on phones */
+const BAR_STYLE: CSSProperties = {
+  // display is CSS-controlled (hidden on desktop); lock everything else inline
+  flexDirection: 'row',
+  flexWrap: 'nowrap',
+  alignItems: 'stretch',
+  justifyContent: 'space-around',
+  gap: 0,
+  position: 'fixed',
+  top: 'auto',
+  left: 0,
+  right: 0,
+  bottom: 0,
+  width: '100%',
+  maxWidth: '100vw',
+  height: 'auto',
+  minHeight: 64,
+  maxHeight: 88,
+  margin: 0,
+  zIndex: 1200,
+  padding: '6px 4px calc(6px + env(safe-area-inset-bottom, 0px))',
+  background: 'rgba(2, 11, 20, 0.98)',
+  border: 0,
+  borderTop: '1px solid rgba(0, 245, 255, 0.22)',
+  borderRadius: 0,
+  boxSizing: 'border-box',
+  direction: 'ltr',
+  writingMode: 'horizontal-tb',
+  transform: 'none',
+  overflow: 'hidden',
+};
+
+const ITEM_STYLE: CSSProperties = {
+  flex: '1 1 0',
+  display: 'flex',
+  flexDirection: 'column',
+  flexWrap: 'nowrap',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 3,
+  minWidth: 0,
+  width: 'auto',
+  height: 'auto',
+  minHeight: 52,
+  margin: 0,
+  padding: '6px 2px',
+  textDecoration: 'none',
+  border: 0,
+  borderRadius: 10,
+  writingMode: 'horizontal-tb',
+  transform: 'none',
+  whiteSpace: 'normal',
+};
+
+const LABEL_STYLE: CSSProperties = {
+  display: 'block',
+  fontSize: '0.62rem',
+  fontWeight: 600,
+  lineHeight: 1.15,
+  textAlign: 'center',
+  maxWidth: '100%',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  writingMode: 'horizontal-tb',
+  transform: 'none',
+};
+
+function TabIcon({ name }: { name: string; active: boolean }) {
   const common = {
     width: 22,
     height: 22,
     viewBox: '0 0 24 24',
     fill: 'none',
-    stroke,
+    stroke: 'currentColor',
     strokeWidth: 1.8,
     strokeLinecap: 'round' as const,
     strokeLinejoin: 'round' as const,
@@ -97,11 +165,10 @@ export default function BottomNav() {
   const t = useTranslations();
   const pathname = usePathname() || '/';
 
-  // Hide on admin screens
   if (pathname.startsWith('/admin')) return null;
 
   return (
-    <nav className="bottom-nav" aria-label="Primary">
+    <div className="bottom-nav" role="navigation" aria-label="Primary" style={BAR_STYLE}>
       {TABS.map((tab) => {
         const active = tab.match(pathname);
         return (
@@ -110,14 +177,17 @@ export default function BottomNav() {
             href={tab.href}
             className={`bottom-nav-item${active ? ' active' : ''}${tab.accent ? ' accent' : ''}`}
             aria-current={active ? 'page' : undefined}
+            style={ITEM_STYLE}
           >
-            <span className="bottom-nav-icon">
+            <span className="bottom-nav-icon" aria-hidden="true">
               <TabIcon name={tab.icon} active={active} />
             </span>
-            <span className="bottom-nav-label">{t.nav[tab.key]}</span>
+            <span className="bottom-nav-label" style={LABEL_STYLE}>
+              {t.nav[tab.key]}
+            </span>
           </Link>
         );
       })}
-    </nav>
+    </div>
   );
 }

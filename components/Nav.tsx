@@ -48,7 +48,7 @@ export default function Nav() {
   }, [open]);
 
   return (
-    <nav>
+    <nav className="site-nav" aria-label="Site">
       <Link href="/" className="nav-logo">
         Roj<span>Tech</span>
       </Link>
