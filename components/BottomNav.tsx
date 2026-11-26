@@ -34,6 +34,7 @@ const TABS = [
       p.startsWith('/more') ||
       p.startsWith('/about') ||
       p.startsWith('/team') ||
+      p.startsWith('/projects') ||
       p.startsWith('/connect'),
   },
 ];

@@ -7,6 +7,7 @@ import { SlideCorners } from '@/components/icons';
 const MORE_LINKS = [
   { href: '/about', key: 'about' as const },
   { href: '/team', key: 'team' as const },
+  { href: '/projects', key: 'projects' as const },
   { href: '/connect', key: 'connect' as const },
 ];
 

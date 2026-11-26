@@ -73,6 +73,7 @@ export type Translations = {
     learn: string;
     tools: string;
     courses: string;
+    projects: string;
     connect: string;
     more: string;
     openMenu: string;
@@ -135,6 +136,24 @@ export type Translations = {
     cardTitle: string;
     cardDesc: string;
     openLibrary: string;
+  };
+  projects: {
+    tag: string;
+    titlePrefix: string;
+    titleEm: string;
+    lead: string;
+    openDemo: string;
+    demoBadge: string;
+    codeLabel: string;
+    items: Record<
+      string,
+      {
+        name: string;
+        tagline: string;
+        desc: string;
+        tags: string[];
+      }
+    >;
   };
   footer: {
     copy: string;

@@ -44,6 +44,7 @@ export const en: Translations = {
     learn: 'Learn',
     tools: 'Tools',
     courses: 'Courses',
+    projects: 'Projects',
     connect: 'Connect',
     more: 'More',
     openMenu: 'Open menu',
@@ -241,6 +242,47 @@ export const en: Translations = {
     cardDesc:
       'Browse published materials across programming, cybersecurity, networking, and software engineering.',
     openLibrary: 'Open library →',
+  },
+  projects: {
+    tag: 'Our Work',
+    titlePrefix: '',
+    titleEm: 'Projects',
+    lead: 'Live demos built by RojTech — explore, click, and try each product yourself.',
+    openDemo: 'Open live demo',
+    demoBadge: 'LIVE DEMO',
+    codeLabel: 'PROJECT_',
+    items: {
+      'hali-kar': {
+        name: 'Hali Kar',
+        tagline: 'Jobs marketplace for Kurdistan',
+        desc: 'Find jobs, apply fast, build a CV, and connect with employers by call or WhatsApp. Employer tools include publishing jobs and managing applicants.',
+        tags: ['Jobs', 'Marketplace', 'Kurdistan'],
+      },
+      parastin360: {
+        name: 'Parastin 360',
+        tagline: 'Digital protection & awareness',
+        desc: 'A protection-focused demo platform for cybersecurity awareness and safer digital habits — built for real community use cases.',
+        tags: ['Security', 'Awareness', 'Protection'],
+      },
+      'ukh-lab': {
+        name: 'UKH Lab System',
+        tagline: 'Laboratory management demo',
+        desc: 'A browser-based lab system demo with sample data, local workflow, and a fast first-visit setup experience for testing lab operations.',
+        tags: ['Healthcare', 'Lab', 'System'],
+      },
+      keepit: {
+        name: 'KeepIt',
+        tagline: 'AI builds what you describe',
+        desc: 'Describe an idea and an AI agent helps design, build, and deploy it quickly — a demo of modern agent-driven product creation.',
+        tags: ['AI', 'Builder', 'Agents'],
+      },
+      'roj-quest': {
+        name: 'Roj Quest',
+        tagline: 'Think. Code. Conquer.',
+        desc: 'A programming quiz game with timed challenges, XP, achievements, and a leaderboard — built for festivals and learners practicing C.',
+        tags: ['Quiz', 'Education', 'C Language'],
+      },
+    },
   },
   footer: {
     copy: '© 2026 RojTech Platform · All Rights Reserved',
